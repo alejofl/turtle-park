@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+package admin;
+
+option java_package = "ar.edu.itba.pod.admin";
+option java_multiple_files = true;
+
+service AdminService {
+  rpc addRide(RideRequest) returns (commons.Empty);
+  rpc addPass(PassRequest) returns (commons.Empty);
+  rpc loadRideCapacity(CapacityRequest) returns (commons.Empty);
+}
+
+message RideRequest {
+  string name = 1;
+  string openingTime = 2;
+  string closingTime = 3;
+  int32 slotSize = 4;
+}
+
+enum PassType {
+  UNDEFINED = 0;
+  UNLIMITED = 1;
+  THREE = 2;
+  HALF_DAY = 3;
+}
+
+message PassRequest {
+  string id = 1;
+  PassType type = 2;
+  int32 dayOfYear = 3;
+}
+
+message CapacityRequest {
+  string name = 1;
+  int32 dayOfYear = 2;
+  int32 capacity = 3;
+}

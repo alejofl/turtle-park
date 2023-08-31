@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package commons;
+
+option java_package = "ar.edu.itba.pod.commons";
+option java_multiple_files = true;
+
+
+message Empty {
+
+}

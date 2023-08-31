@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+package book;
+
+option java_package = "ar.edu.itba.pod.book";
+option java_multiple_files = true;
+
+service BookService {
+  rpc getRides(commons.Empty) returns (RideResponse);
+  rpc getAvailability(AvailabilityRequest) returns (commons.Empty);
+  rpc bookRide(BookingInformation) returns (BookingResponse);
+  rpc confirmBooking(BookingInformation) returns (commons.Empty);
+  rpc cancelBooking(BookingInformation) returns (commons.Empty);
+}
+
+message RideInformation {
+  string name = 1;
+  string openingTime = 2;
+  string closingTime = 3;
+}
+
+message RideResponse {
+  repeated RideInformation rides = 1;
+}
+
+message SingleSlotAvailabilityResponse {
+  string rideName = 1;
+  string slot = 2;
+}
+
+message MultipleSlotAvailabilityResponse {
+  string rideName = 1;
+  string startingSlot = 2;
+  string endingSlot = 3;
+}
+
+message MultipleRidesAvailabilityResponse {
+  string startingSlot = 1;
+  string endingSlot = 2;
+}
+
+message AvailabilityRequest {
+  int32 dayOfYear = 1;
+  oneof data {
+    SingleSlotAvailabilityResponse singleSlotAvailability = 2;
+    MultipleSlotAvailabilityResponse multipleSlotAvailability = 3;
+    MultipleRidesAvailabilityResponse multipleRidesAvailability = 4;
+  }
+}
+
+message BookingInformation {
+  string rideName = 1;
+  int32 dayOfYear = 2;
+  string slot = 3;
+  string userId = 4;
+}
+
+enum BookingStatus {
+  UNDEFINED = 0;
+  PENDING = 1;
+  CONFIRMED = 2;
+}
+
+message BookingResponse {
+  BookingStatus status = 1;
+}
