@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+package query;
+
+option java_package = "ar.edu.itba.pod.query";
+option java_multiple_files = true;
+
+service QueryService {
+  rpc getSuggestedCapacities(QueryRequest) returns (SuggestedCapacityResponse);
+  rpc getConfirmedBookings(QueryRequest) returns (ConfirmedBookingResponse);
+}
+
+message QueryRequest {
+  int32 dayOfYear = 1;
+}
+
+message SuggestedCapacity {
+  string rideName = 1;
+  int32 suggestedCapacity = 2;
+  string slot = 3;
+}
+
+message SuggestedCapacityResponse {
+  repeated SuggestedCapacity capacities = 1;
+}
+
+message ConfirmedBooking {
+  string rideName = 1;
+  string userId = 2;
+  string slot = 3;
+}
+
+message ConfirmedBookingResponse {
+  repeated ConfirmedBooking bookings = 1;
+}

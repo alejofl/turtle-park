@@ -14,7 +14,7 @@ service AdminService {
 }
 
 message RideRequest {
-  string name = 1;
+  string rideName = 1;
   string openingTime = 2;
   string closingTime = 3;
   int32 slotSize = 4;
@@ -28,13 +28,13 @@ enum PassType {
 }
 
 message PassRequest {
-  string id = 1;
+  string userId = 1;
   PassType type = 2;
   int32 dayOfYear = 3;
 }
 
 message CapacityRequest {
-  string name = 1;
+  string rideName = 1;
   int32 dayOfYear = 2;
   int32 capacity = 3;
 }

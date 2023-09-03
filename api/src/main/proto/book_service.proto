@@ -10,13 +10,13 @@ option java_multiple_files = true;
 service BookService {
   rpc getRides(commons.Empty) returns (RideResponse);
   rpc getAvailability(AvailabilityRequest) returns (commons.Empty);
-  rpc bookRide(BookingInformation) returns (BookingResponse);
-  rpc confirmBooking(BookingInformation) returns (commons.Empty);
-  rpc cancelBooking(BookingInformation) returns (commons.Empty);
+  rpc bookRide(BookingRequest) returns (BookingResponse);
+  rpc confirmBooking(BookingRequest) returns (commons.Empty);
+  rpc cancelBooking(BookingRequest) returns (commons.Empty);
 }
 
 message RideInformation {
-  string name = 1;
+  string rideName = 1;
   string openingTime = 2;
   string closingTime = 3;
 }
@@ -25,18 +25,18 @@ message RideResponse {
   repeated RideInformation rides = 1;
 }
 
-message SingleSlotAvailabilityResponse {
+message SingleSlotAvailabilityRequest {
   string rideName = 1;
   string slot = 2;
 }
 
-message MultipleSlotAvailabilityResponse {
+message MultipleSlotAvailabilityRequest {
   string rideName = 1;
   string startingSlot = 2;
   string endingSlot = 3;
 }
 
-message MultipleRidesAvailabilityResponse {
+message MultipleRidesAvailabilityRequest {
   string startingSlot = 1;
   string endingSlot = 2;
 }
@@ -44,13 +44,13 @@ message MultipleRidesAvailabilityResponse {
 message AvailabilityRequest {
   int32 dayOfYear = 1;
   oneof data {
-    SingleSlotAvailabilityResponse singleSlotAvailability = 2;
-    MultipleSlotAvailabilityResponse multipleSlotAvailability = 3;
-    MultipleRidesAvailabilityResponse multipleRidesAvailability = 4;
+    SingleSlotAvailabilityRequest singleSlotAvailability = 2;
+    MultipleSlotAvailabilityRequest multipleSlotAvailability = 3;
+    MultipleRidesAvailabilityRequest multipleRidesAvailability = 4;
   }
 }
 
-message BookingInformation {
+message BookingRequest {
   string rideName = 1;
   int32 dayOfYear = 2;
   string slot = 3;

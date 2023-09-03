@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+package notification;
+
+option java_package = "ar.edu.itba.pod.notification";
+option java_multiple_files = true;
+
+service NotificationService {
+  rpc followBooking(NotificationRequest) returns (commons.Empty);
+  rpc unfollowBooking(NotificationRequest) returns (commons.Empty);
+}
+
+message NotificationRequest {
+  string rideName = 1;
+  int32 dayOfYear = 2;
+  string userId = 3;
+}
