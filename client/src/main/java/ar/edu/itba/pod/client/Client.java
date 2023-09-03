@@ -2,25 +2,45 @@ package ar.edu.itba.pod.client;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class Client {
-    private static Logger logger = LoggerFactory.getLogger(Client.class);
+public abstract class Client implements Closeable {
+    private final ManagedChannel channel;
 
-    public static void main(String[] args) throws InterruptedException {
-        logger.info("tpe1-g2 Client Starting ...");
-        logger.info("grpc-com-patterns Client Starting ...");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051)
+    private final Action action;
+
+    public Client() {
+        if (!hasValidArguments()) {
+            throw new IllegalArgumentException();
+        }
+        this.action = getActionClass();
+        if (!this.action.hasValidArguments()) {
+            throw new IllegalArgumentException();
+        }
+        channel = ManagedChannelBuilder.forTarget(System.getProperty("serverAddress"))
                 .usePlaintext()
                 .build();
+    }
 
+    private boolean hasValidArguments() {
+        return System.getProperty("serverAddress") != null && System.getProperty("action") != null;
+    }
+
+    public void run() {
+        action.run();
+    }
+
+    public abstract Action getActionClass();
+
+    @Override
+    public void close() throws IOException {
         try {
-
-        } finally {
             channel.shutdown().awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new IOException(e);
         }
     }
 }

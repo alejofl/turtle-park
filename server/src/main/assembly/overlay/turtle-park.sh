@@ -1,0 +1,5 @@
+#!/bin/bash
+
+MAIN_CLASS="ar.edu.itba.pod.server.TurtleParkServer"
+
+java -cp 'lib/jars/*' $MAIN_CLASS $*
