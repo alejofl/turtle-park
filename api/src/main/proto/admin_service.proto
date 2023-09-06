@@ -10,7 +10,7 @@ option java_multiple_files = true;
 service AdminService {
   rpc addRide(RideRequest) returns (commons.Empty);
   rpc addPass(PassRequest) returns (commons.Empty);
-  rpc loadRideCapacity(CapacityRequest) returns (commons.Empty);
+  rpc loadRideCapacity(CapacityRequest) returns (CapacityResponse);
 }
 
 message RideRequest {
@@ -37,4 +37,10 @@ message CapacityRequest {
   string rideName = 1;
   int32 dayOfYear = 2;
   int32 capacity = 3;
+}
+
+message CapacityResponse {
+  int32 pendingBookings = 1;
+  int32 confirmedBookings = 2;
+  int32 cancelledBookings = 3;
 }

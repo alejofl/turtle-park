@@ -2,9 +2,11 @@ package ar.edu.itba.pod.servant;
 
 import ar.edu.itba.pod.admin.AdminServiceGrpc.AdminServiceImplBase;
 import ar.edu.itba.pod.admin.CapacityRequest;
+import ar.edu.itba.pod.admin.CapacityResponse;
 import ar.edu.itba.pod.admin.PassRequest;
 import ar.edu.itba.pod.admin.RideRequest;
 import ar.edu.itba.pod.commons.Empty;
+import ar.edu.itba.pod.data.CapacityInformation;
 import ar.edu.itba.pod.data.Park;
 import ar.edu.itba.pod.server.Util;
 import io.grpc.Status;
@@ -49,17 +51,21 @@ public class AdminServant extends AdminServiceImplBase {
     }
 
     @Override
-    public void loadRideCapacity(CapacityRequest capacityRequest, StreamObserver<Empty> empty) {
+    public void loadRideCapacity(CapacityRequest capacityRequest, StreamObserver<CapacityResponse> capacityResponse) {
         try {
-            park.loadRideCapacity(
+            CapacityInformation ans = park.loadRideCapacity(
                     capacityRequest.getRideName(),
                     capacityRequest.getDayOfYear(),
                     capacityRequest.getCapacity()
             );
-            empty.onNext(Empty.newBuilder().build());
-            empty.onCompleted();
+            capacityResponse.onNext(CapacityResponse.newBuilder()
+                    .setPendingBookings(ans.getPendingBookings())
+                    .setConfirmedBookings(ans.getConfirmedBookings())
+                    .setCanceledBookings(ans.getCancelledBookings())
+                    .build());
+            capacityResponse.onCompleted();
         } catch (IllegalArgumentException e) {
-            empty.onError(Status.INVALID_ARGUMENT.asRuntimeException());
+            capacityResponse.onError(Status.INVALID_ARGUMENT.asRuntimeException());
         }
     }
 }

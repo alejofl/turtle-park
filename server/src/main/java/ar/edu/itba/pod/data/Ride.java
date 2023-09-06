@@ -35,9 +35,9 @@ public class Ride {
         return slotSize;
     }
 
-    public synchronized void setCapacityForDay(int dayOfYear, int capacity) {
+    public synchronized CapacityInformation setCapacityForDay(int dayOfYear, int capacity) {
         ridesForDay.putIfAbsent(dayOfYear, new RideForDay(openingTime, closingTime, slotSize));
-        ridesForDay.get(dayOfYear).setCapacity(capacity);
+        return ridesForDay.get(dayOfYear).setCapacity(capacity);
     }
 
     public boolean hasCapacityForDay(int dayOfYear) {

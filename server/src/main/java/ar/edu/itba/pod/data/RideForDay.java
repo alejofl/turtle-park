@@ -2,11 +2,12 @@ package ar.edu.itba.pod.data;
 
 import java.util.*;
 import java.time.LocalTime;
+import java.util.stream.Stream;
 
 public class RideForDay {
     private Integer capacity = null;
     private final Set<Visitor> notifications = new HashSet<>();
-    private final Map<LocalTime, List<Visitor>> pendingBookings = new HashMap<>();
+    private final Map<LocalTime, Queue<Visitor>> pendingBookings = new HashMap<>();
     private final Map<LocalTime, Set<Visitor>> confirmedBookings = new HashMap<>();
 
     public RideForDay(LocalTime openingTime, LocalTime closingTime, int slotSize) {
@@ -20,9 +21,37 @@ public class RideForDay {
         return capacity != null;
     }
 
-    public synchronized void setCapacity(int capacity) {
+    public synchronized CapacityInformation setCapacity(int capacity) {
         this.capacity = capacity;
+        int confirmedBookingsCount = 0;
+        int pendingBookingsCount = 0;
+        int cancelledBookingCount = 0;
+        List<LocalTime> slots = pendingBookings.keySet().stream().sorted().toList();
+        for (LocalTime slot : slots) {
+            Queue<Visitor> pendings = pendingBookings.get(slot);
+            for (int i = 0; i < capacity && !pendings.isEmpty(); i++) {
+                confirmedBookings.get(slot).add(pendings.poll());
+                confirmedBookingsCount++;
+            }
+        }
+        for (int i = 0; i < slots.size(); i++) {
+            Queue<Visitor> pendings = pendingBookings.get(slots.get(i));
+            for (int j = i+1; !pendings.isEmpty() && j < slots.size(); j++) {
+                int occupiedCapacity = pendingBookings.get(slots.get(j)).size() + confirmedBookings.get(slots.get(j)).size();
+                while (!pendings.isEmpty() && occupiedCapacity < capacity) {
+                    pendingBookings.get(slots.get(j)).add(pendings.poll());
+                    pendingBookingsCount++;
+                    occupiedCapacity++;
+                }
+            }
+            while (!pendings.isEmpty()) {
+                pendings.poll();
+                cancelledBookingCount++;
+            }
+        }
+        return new CapacityInformation(pendingBookingsCount, confirmedBookingsCount, cancelledBookingCount);
     }
+
 
     public Integer getCapacity() {
         return capacity;

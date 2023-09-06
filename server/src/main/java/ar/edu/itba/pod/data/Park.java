@@ -47,14 +47,14 @@ public class Park {
         visitors.get(dayOfYear).put(visitorId, new Visitor(visitorId, passType));
     }
 
-    public synchronized void loadRideCapacity(String rideName, int dayOfYear, int capacity) {
+    public synchronized CapacityInformation loadRideCapacity(String rideName, int dayOfYear, int capacity) {
         if (!rides.containsKey(rideName) ||
             !Util.isValidDayOfYear(dayOfYear) ||
             capacity < 0 ||
             rides.get(rideName).hasCapacityForDay(dayOfYear)) {
             throw new IllegalArgumentException();
         }
-        rides.get(rideName).setCapacityForDay(dayOfYear, capacity);
+        return rides.get(rideName).setCapacityForDay(dayOfYear, capacity);
     }
 
 
