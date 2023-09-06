@@ -30,7 +30,9 @@ public class RideForDay {
         for (LocalTime slot : slots) {
             Queue<Visitor> pendings = pendingBookings.get(slot);
             for (int i = 0; i < capacity && !pendings.isEmpty(); i++) {
-                confirmedBookings.get(slot).add(pendings.poll());
+                Visitor visitor = pendings.poll();
+                confirmedBookings.get(slot).add(visitor);
+                visitor.confirmBooking();
                 confirmedBookingsCount++;
             }
         }
@@ -39,9 +41,14 @@ public class RideForDay {
             for (int j = i+1; !pendings.isEmpty() && j < slots.size(); j++) {
                 int occupiedCapacity = pendingBookings.get(slots.get(j)).size() + confirmedBookings.get(slots.get(j)).size();
                 while (!pendings.isEmpty() && occupiedCapacity < capacity) {
-                    pendingBookings.get(slots.get(j)).add(pendings.poll());
-                    pendingBookingsCount++;
-                    occupiedCapacity++;
+                    Visitor visitor = pendings.poll();
+                    if (visitor.getPassType() == PassType.HALF_DAY && slots.get(j).isAfter(Visitor.HALF_DAY_CUTOFF) ){
+                        cancelledBookingCount++;
+                    } else {
+                        pendingBookings.get(slots.get(j)).add(visitor);
+                        pendingBookingsCount++;
+                        occupiedCapacity++;
+                    }
                 }
             }
             while (!pendings.isEmpty()) {
@@ -72,6 +79,7 @@ public class RideForDay {
             return false;
         } else if (confirmedBookings.get(slot).size() < capacity) {
             confirmedBookings.get(slot).add(visitor);
+            visitor.confirmBooking();
             return true;
         }
         throw new IllegalStateException();

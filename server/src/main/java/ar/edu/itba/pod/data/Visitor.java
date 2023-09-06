@@ -1,7 +1,5 @@
 package ar.edu.itba.pod.data;
 
-import ar.edu.itba.pod.admin.PassType;
-
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -9,6 +7,8 @@ public class Visitor {
     private final UUID id;
     private final PassType passType;
     private int confirmedBookings;
+
+    public static final LocalTime HALF_DAY_CUTOFF = LocalTime.of(14,0,0);
 
     public Visitor(UUID id, PassType passType) {
         this.id = id;
@@ -25,7 +25,7 @@ public class Visitor {
                 return confirmedBookings < 3;
             }
             case HALF_DAY -> {
-                return slot.isBefore(LocalTime.of(14,0,0));
+                return slot.isBefore(HALF_DAY_CUTOFF);
             }
             default -> {
                 return false;
@@ -46,5 +46,13 @@ public class Visitor {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    public PassType getPassType() {
+        return passType;
+    }
+
+    public void confirmBooking() {
+        confirmedBookings++;
     }
 }

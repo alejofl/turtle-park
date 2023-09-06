@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.data;
 
-import ar.edu.itba.pod.admin.PassType;
 import ar.edu.itba.pod.server.Util;
 
 import java.time.LocalTime;
@@ -36,9 +35,7 @@ public class Park {
     }
 
     public synchronized void addPass(UUID visitorId, PassType passType, int dayOfYear) {
-        if (passType == PassType.UNDEFINED ||
-                passType == PassType.UNRECOGNIZED ||
-                !Util.isValidDayOfYear(dayOfYear) ||
+        if (!Util.isValidDayOfYear(dayOfYear) ||
                 visitors.getOrDefault(dayOfYear, new HashMap<>()).containsKey(visitorId)
         ) {
             throw new IllegalArgumentException();

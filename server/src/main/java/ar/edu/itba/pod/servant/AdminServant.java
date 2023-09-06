@@ -8,6 +8,7 @@ import ar.edu.itba.pod.admin.RideRequest;
 import ar.edu.itba.pod.commons.Empty;
 import ar.edu.itba.pod.data.CapacityInformation;
 import ar.edu.itba.pod.data.Park;
+import ar.edu.itba.pod.data.PassType;
 import ar.edu.itba.pod.server.Util;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 public class AdminServant extends AdminServiceImplBase {
 
-    private Park park = Park.getInstance();
+    private final Park park = Park.getInstance();
 
     @Override
     public void addRide(RideRequest rideRequest, StreamObserver<Empty> empty) {
@@ -40,7 +41,7 @@ public class AdminServant extends AdminServiceImplBase {
         try {
             park.addPass(
                     UUID.fromString(passRequest.getUserId()),
-                    passRequest.getType(),
+                    PassType.valueOf(passRequest.getType().name()),
                     passRequest.getDayOfYear()
             );
             empty.onNext(Empty.newBuilder().build());
@@ -59,9 +60,9 @@ public class AdminServant extends AdminServiceImplBase {
                     capacityRequest.getCapacity()
             );
             capacityResponse.onNext(CapacityResponse.newBuilder()
-                    .setPendingBookings(ans.getPendingBookings())
-                    .setConfirmedBookings(ans.getConfirmedBookings())
-                    .setCanceledBookings(ans.getCancelledBookings())
+                    .setPendingBookings(ans.pendingBookings())
+                    .setConfirmedBookings(ans.confirmedBookings())
+                    .setCanceledBookings(ans.cancelledBookings())
                     .build());
             capacityResponse.onCompleted();
         } catch (IllegalArgumentException e) {
