@@ -56,4 +56,16 @@ public class Park {
         }
         rides.get(rideName).setCapacityForDay(dayOfYear, capacity);
     }
+
+
+    public boolean bookRide(String rideName, int dayOfYear, LocalTime slot, UUID visitorId) {
+        if (!Util.isValidDayOfYear(dayOfYear) || !visitors.containsKey(dayOfYear) ||
+                !visitors.get(dayOfYear).containsKey(visitorId) ||
+                !visitors.get(dayOfYear).get(visitorId).canBookRide(slot) || !rides.containsKey(rideName) ||
+                !rides.get(rideName).isValidSlot(slot)
+        ) {
+            throw new IllegalArgumentException();
+        }
+        return rides.get(rideName).bookForDay(dayOfYear, slot, visitors.get(dayOfYear).get(visitorId));
+    }
 }

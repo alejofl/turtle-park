@@ -3,6 +3,7 @@ package ar.edu.itba.pod.data;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Ride {
     private final String name;
@@ -35,11 +36,26 @@ public class Ride {
     }
 
     public synchronized void setCapacityForDay(int dayOfYear, int capacity) {
-        ridesForDay.putIfAbsent(dayOfYear, new RideForDay());
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(openingTime, closingTime, slotSize));
         ridesForDay.get(dayOfYear).setCapacity(capacity);
     }
 
     public boolean hasCapacityForDay(int dayOfYear) {
         return ridesForDay.containsKey(dayOfYear) && ridesForDay.get(dayOfYear).hasCapacity();
+    }
+
+    public boolean isValidSlot(LocalTime slot) {
+        boolean ans = slot.isAfter(openingTime) && slot.isBefore(closingTime);
+        for (LocalTime i = openingTime; ans && i.isBefore(closingTime); i = i.plusMinutes(slotSize)) {
+            if (i.equals(slot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean bookForDay(int dayOfYear, LocalTime slot, Visitor visitor) {
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(openingTime, closingTime, slotSize));
+        return ridesForDay.get(dayOfYear).bookRide(slot, visitor);
     }
 }
