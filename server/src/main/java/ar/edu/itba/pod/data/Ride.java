@@ -33,4 +33,13 @@ public class Ride {
     public int getSlotSize() {
         return slotSize;
     }
+
+    public synchronized void setCapacityForDay(int dayOfYear, int capacity) {
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay());
+        ridesForDay.get(dayOfYear).setCapacity(capacity);
+    }
+
+    public boolean hasCapacityForDay(int dayOfYear) {
+        return ridesForDay.containsKey(dayOfYear) && ridesForDay.get(dayOfYear).hasCapacity();
+    }
 }
