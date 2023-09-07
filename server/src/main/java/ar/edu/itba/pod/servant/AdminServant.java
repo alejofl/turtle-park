@@ -62,7 +62,7 @@ public class AdminServant extends AdminServiceImplBase {
             capacityResponse.onNext(CapacityResponse.newBuilder()
                     .setPendingBookings(ans.pendingBookings())
                     .setConfirmedBookings(ans.confirmedBookings())
-                    .setCanceledBookings(ans.cancelledBookings())
+                    .setCancelledBookings(ans.cancelledBookings())
                     .build());
             capacityResponse.onCompleted();
         } catch (IllegalArgumentException e) {

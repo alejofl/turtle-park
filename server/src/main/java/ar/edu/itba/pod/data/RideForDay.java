@@ -5,12 +5,16 @@ import java.time.LocalTime;
 import java.util.stream.Stream;
 
 public class RideForDay {
+    private final String rideName;
+    private final int dayOfYear;
     private Integer capacity = null;
     private final Set<Visitor> notifications = new HashSet<>();
     private final Map<LocalTime, Queue<Visitor>> pendingBookings = new HashMap<>();
-    private final Map<LocalTime, Set<Visitor>> confirmedBookings = new HashMap<>();
+    private final Map<LocalTime, Set<Booking>> confirmedBookings = new HashMap<>();
 
-    public RideForDay(LocalTime openingTime, LocalTime closingTime, int slotSize) {
+    public RideForDay(String rideName, int dayOfYear, LocalTime openingTime, LocalTime closingTime, int slotSize) {
+        this.rideName = rideName;
+        this.dayOfYear = dayOfYear;
         for (LocalTime i = openingTime; i.isBefore(closingTime); i = i.plusMinutes(slotSize)) {
             pendingBookings.put(i, new LinkedList<>());
             confirmedBookings.put(i, new HashSet<>());
@@ -31,7 +35,7 @@ public class RideForDay {
             Queue<Visitor> pendings = pendingBookings.get(slot);
             for (int i = 0; i < capacity && !pendings.isEmpty(); i++) {
                 Visitor visitor = pendings.poll();
-                confirmedBookings.get(slot).add(visitor);
+                confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor));
                 visitor.confirmBooking();
                 confirmedBookingsCount++;
             }
@@ -66,19 +70,21 @@ public class RideForDay {
 
     /**
      *
-     * @param slot
-     * @param visitor
-     * @return false when user added to pending list and true when user added is in confirmed list.
+     * @param slot <code>LocalTime</code> for the booking
+     * @param visitor <code>Visitor</code> who is booking
+     * @return <code>false</code> if the visitor was added to the pending list.<br><code>true</code> if the visitor was added to the confirmed list.
+     * @throws IllegalArgumentException if the booking already exists
+     * @throws IllegalStateException if the requested slot is full
      */
     public boolean bookRide(LocalTime slot, Visitor visitor) {
-        if (pendingBookings.get(slot).contains(visitor) || confirmedBookings.get(slot).contains(visitor)) {
+        if (pendingBookings.get(slot).contains(visitor) || confirmedBookings.get(slot).contains(new Booking(rideName, dayOfYear, slot, visitor))) {
             throw new IllegalArgumentException();
         }
         if (capacity == null) {
             pendingBookings.get(slot).add(visitor);
             return false;
         } else if (confirmedBookings.get(slot).size() < capacity) {
-            confirmedBookings.get(slot).add(visitor);
+            confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor));
             visitor.confirmBooking();
             return true;
         }

@@ -33,7 +33,6 @@ public class Booking implements Comparable<Booking> {
         if (dayOfYear != booking.dayOfYear) return false;
         if (!rideName.equals(booking.rideName)) return false;
         if (!slot.equals(booking.slot)) return false;
-        if (!timestamp.equals(booking.timestamp)) return false;
         return visitor.equals(booking.visitor);
     }
 
