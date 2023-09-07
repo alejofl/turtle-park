@@ -58,4 +58,18 @@ public class Ride {
         ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
         return ridesForDay.get(dayOfYear).bookRide(slot, visitor);
     }
+
+    public void confirmBooking(int dayOfYear, LocalTime slot, Visitor visitor) {
+        if (!ridesForDay.containsKey(dayOfYear)) {
+            throw new IllegalArgumentException();
+        }
+        ridesForDay.get(dayOfYear).confirmBooking(slot, visitor);
+    }
+
+    public void cancelBooking(int dayOfYear, LocalTime slot, Visitor visitor) {
+        if (!ridesForDay.containsKey(dayOfYear)) {
+            throw new IllegalArgumentException();
+        }
+        ridesForDay.get(dayOfYear).cancelBooking(slot, visitor);
+    }
 }

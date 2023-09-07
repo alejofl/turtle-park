@@ -90,4 +90,27 @@ public class RideForDay {
         }
         throw new IllegalStateException();
     }
+
+    public void confirmBooking(LocalTime slot, Visitor visitor) {
+        if (confirmedBookings.get(slot).contains(new Booking(rideName, dayOfYear, slot, visitor)) ||
+            capacity == null || !pendingBookings.get(slot).contains(visitor)) {
+            throw new IllegalArgumentException();
+        }
+        pendingBookings.get(slot).remove(visitor);
+        confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor));
+        visitor.confirmBooking();
+    }
+
+    public void cancelBooking(LocalTime slot, Visitor visitor) {
+        if (confirmedBookings.get(slot).contains(new Booking(rideName, dayOfYear, slot, visitor))) {
+            confirmedBookings.get(slot).remove(new Booking(rideName, dayOfYear, slot, visitor));
+            visitor.cancelBooking();
+            return;
+        }
+        if (pendingBookings.get(slot).contains(visitor)) {
+            pendingBookings.get(slot).remove(visitor);
+            return;
+        }
+        throw new IllegalArgumentException();
+    }
 }

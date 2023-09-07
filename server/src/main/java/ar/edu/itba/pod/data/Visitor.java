@@ -17,20 +17,7 @@ public class Visitor {
     }
 
     public boolean canBookRide(LocalTime slot) {
-        switch (passType) {
-            case UNLIMITED -> {
-                return true;
-            }
-            case THREE -> {
-                return confirmedBookings < 3;
-            }
-            case HALF_DAY -> {
-                return slot.isBefore(HALF_DAY_CUTOFF);
-            }
-            default -> {
-                return false;
-            }
-        }
+        return passType.isValid(confirmedBookings, slot);
     }
 
     @Override
@@ -54,5 +41,9 @@ public class Visitor {
 
     public void confirmBooking() {
         confirmedBookings++;
+    }
+
+    public void cancelBooking() {
+        confirmedBookings--;
     }
 }

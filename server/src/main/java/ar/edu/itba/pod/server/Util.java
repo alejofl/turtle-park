@@ -7,9 +7,11 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 public class Util {
+    public static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+
     public static Optional<LocalTime> checkTimeFormat(String time) {
         try {
-            return Optional.of(LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm")));
+            return Optional.of(LocalTime.parse(time, TIME_FORMATTER));
         } catch (DateTimeParseException e) {
             return Optional.empty();
         }

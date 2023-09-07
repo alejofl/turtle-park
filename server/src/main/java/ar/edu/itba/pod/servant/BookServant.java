@@ -8,6 +8,7 @@ import ar.edu.itba.pod.server.Util;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BookServant extends BookServiceImplBase {
 
@@ -15,7 +16,16 @@ public class BookServant extends BookServiceImplBase {
 
     @Override
     public void getRides(Empty empty, StreamObserver<RideResponse> rideResponse) {
-        //TODO
+        RideResponse response = RideResponse.newBuilder().addAllRides(
+                park.getRides().stream().map(ride -> RideInformation
+                        .newBuilder()
+                        .setRideName(ride.getName())
+                        .setOpeningTime(ride.getOpeningTime().format(Util.TIME_FORMATTER))
+                        .setClosingTime(ride.getClosingTime().format(Util.TIME_FORMATTER))
+                        .build()).collect(Collectors.toList())
+        ).build();
+        rideResponse.onNext(response);
+        rideResponse.onCompleted();
     }
 
     @Override
@@ -44,11 +54,29 @@ public class BookServant extends BookServiceImplBase {
 
     @Override
     public void confirmBooking(BookingRequest bookingRequest, StreamObserver<Empty> empty) {
-        //TODO
+        try {
+            park.confirmBooking(
+                    bookingRequest.getRideName(),
+                    bookingRequest.getDayOfYear(),
+                    Util.checkTimeFormat(bookingRequest.getSlot()).orElseThrow(IllegalArgumentException::new),
+                    UUID.fromString(bookingRequest.getUserId())
+            );
+        } catch (IllegalArgumentException e) {
+            empty.onError(Status.INVALID_ARGUMENT.asRuntimeException());
+        }
     }
 
     @Override
     public void cancelBooking(BookingRequest bookingRequest, StreamObserver<Empty> empty) {
-        //TODO
+        try {
+            park.cancelBooking(
+                    bookingRequest.getRideName(),
+                    bookingRequest.getDayOfYear(),
+                    Util.checkTimeFormat(bookingRequest.getSlot()).orElseThrow(IllegalArgumentException::new),
+                    UUID.fromString(bookingRequest.getUserId())
+            );
+        } catch (IllegalArgumentException e) {
+            empty.onError(Status.INVALID_ARGUMENT.asRuntimeException());
+        }
     }
 }

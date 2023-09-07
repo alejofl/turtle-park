@@ -54,15 +54,46 @@ public class Park {
         return rides.get(rideName).setCapacityForDay(dayOfYear, capacity);
     }
 
+    /*
+        Si el día es válido entre 1 y 365. Si el día tiene pases creados.
+        Si en ese dia hay un pase para el visitante.
+        Si en ese día y slot puede reservarlo teniendo en cuenta su pase.
+        Si existe la atracción.
+        Si en esa atracción el slot que se paso como argumento es válida.
+    */
+    private boolean canOperate(String rideName, int dayOfYear, LocalTime slot, UUID visitorId) {
+        return Util.isValidDayOfYear(dayOfYear) && visitors.containsKey(dayOfYear) &&
+                visitors.get(dayOfYear).containsKey(visitorId) &&
+                visitors.get(dayOfYear).get(visitorId).canBookRide(slot) && rides.containsKey(rideName) &&
+                rides.get(rideName).isValidSlot(slot);
+    }
 
+    /*
+        La segunda condición hace referencia al caso en el no existan pases para un día.
+        Es decir nunca se creo el par key-value para ese dia con el mapa con los pases.
+     */
     public boolean bookRide(String rideName, int dayOfYear, LocalTime slot, UUID visitorId) {
-        if (!Util.isValidDayOfYear(dayOfYear) || !visitors.containsKey(dayOfYear) ||
-                !visitors.get(dayOfYear).containsKey(visitorId) ||
-                !visitors.get(dayOfYear).get(visitorId).canBookRide(slot) || !rides.containsKey(rideName) ||
-                !rides.get(rideName).isValidSlot(slot)
-        ) {
+        if (!canOperate(rideName, dayOfYear, slot, visitorId)) {
             throw new IllegalArgumentException();
         }
         return rides.get(rideName).bookForDay(dayOfYear, slot, visitors.get(dayOfYear).get(visitorId));
+    }
+
+    public Collection<Ride> getRides() {
+        return rides.values();
+    }
+
+    public void confirmBooking(String rideName, int dayOfYear, LocalTime slot, UUID visitorId) {
+        if (!canOperate(rideName, dayOfYear, slot, visitorId)) {
+            throw new IllegalArgumentException();
+        }
+        rides.get(rideName).confirmBooking(dayOfYear, slot, visitors.get(dayOfYear).get(visitorId));
+    }
+
+    public void cancelBooking(String rideName, int dayOfYear, LocalTime slot, UUID visitorId) {
+        if (!canOperate(rideName, dayOfYear, slot, visitorId)) {
+            throw new IllegalArgumentException();
+        }
+        rides.get(rideName).cancelBooking(dayOfYear, slot, visitors.get(dayOfYear).get(visitorId));
     }
 }
