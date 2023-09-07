@@ -36,7 +36,7 @@ public class Ride {
     }
 
     public synchronized CapacityInformation setCapacityForDay(int dayOfYear, int capacity) {
-        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(openingTime, closingTime, slotSize));
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
         return ridesForDay.get(dayOfYear).setCapacity(capacity);
     }
 
@@ -55,7 +55,7 @@ public class Ride {
     }
 
     public boolean bookForDay(int dayOfYear, LocalTime slot, Visitor visitor) {
-        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(openingTime, closingTime, slotSize));
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
         return ridesForDay.get(dayOfYear).bookRide(slot, visitor);
     }
 }
