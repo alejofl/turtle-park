@@ -28,9 +28,52 @@ public class BookServant extends BookServiceImplBase {
         rideResponse.onCompleted();
     }
 
+    private AvailabilityInformation getAvailabilityInformationFromData(ar.edu.itba.pod.data.AvailabilityInformation data) {
+        AvailabilityInformation.Builder builder = AvailabilityInformation
+                .newBuilder()
+                .setRideName(data.rideName())
+                .setConfirmedBookings(data.confirmedBookings())
+                .setPendingBookings(data.pendingBookings())
+                .setSlot(data.slot().format(Util.TIME_FORMATTER));
+        data.capacity().ifPresent(builder::setSlotCapacity);
+        return builder.build();
+    }
+
     @Override
-    public void getAvailability(AvailabilityRequest availabilityRequest, StreamObserver<Empty> empty) {
-        //TODO
+    public void getAvailability(AvailabilityRequest availabilityRequest, StreamObserver<AvailabilityResponse> availabilityResponse) {
+        try {
+            AvailabilityResponse.Builder response = AvailabilityResponse.newBuilder();
+            if (availabilityRequest.hasSingleSlotAvailability()) {
+                park.getAvailabilityForSlot(
+                        availabilityRequest.getSingleSlotAvailability().getRideName(),
+                        availabilityRequest.getDayOfYear(),
+                        Util.checkTimeFormat(availabilityRequest.getSingleSlotAvailability().getSlot()).orElseThrow(IllegalArgumentException::new)
+                ).ifPresent(data -> response.addData(getAvailabilityInformationFromData(data)));
+            } else if (availabilityRequest.hasMultipleSlotAvailability()) {
+                response.addAllData(
+                        park.getAvailabilityForSlot(
+                                availabilityRequest.getMultipleSlotAvailability().getRideName(),
+                                availabilityRequest.getDayOfYear(),
+                                Util.checkTimeFormat(availabilityRequest.getMultipleSlotAvailability().getStartingSlot()).orElseThrow(IllegalArgumentException::new),
+                                Util.checkTimeFormat(availabilityRequest.getMultipleSlotAvailability().getEndingSlot()).orElseThrow(IllegalArgumentException::new)
+                        ).stream().map(this::getAvailabilityInformationFromData).collect(Collectors.toList())
+                );
+            } else if (availabilityRequest.hasMultipleRidesAvailability()) {
+                response.addAllData(
+                        park.getAvailabilityForSlot(
+                                availabilityRequest.getDayOfYear(),
+                                Util.checkTimeFormat(availabilityRequest.getMultipleRidesAvailability().getStartingSlot()).orElseThrow(IllegalArgumentException::new),
+                                Util.checkTimeFormat(availabilityRequest.getMultipleRidesAvailability().getEndingSlot()).orElseThrow(IllegalArgumentException::new)
+                        ).stream().map(this::getAvailabilityInformationFromData).collect(Collectors.toList())
+                );
+            } else {
+                throw new IllegalArgumentException();
+            }
+            availabilityResponse.onNext(response.build());
+            availabilityResponse.onCompleted();
+        } catch (IllegalArgumentException e) {
+            availabilityResponse.onError(Status.INVALID_ARGUMENT.asRuntimeException());
+        }
     }
 
     @Override

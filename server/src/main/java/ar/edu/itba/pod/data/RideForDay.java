@@ -113,4 +113,17 @@ public class RideForDay {
         }
         throw new IllegalArgumentException();
     }
+
+    public Optional<AvailabilityInformation> getAvailabilityForSlot(LocalTime slot) {
+        if (!pendingBookings.containsKey(slot)) {
+            return Optional.empty();
+        }
+        return Optional.of(new AvailabilityInformation(
+                rideName,
+                slot,
+                confirmedBookings.get(slot).size(),
+                pendingBookings.get(slot).size(),
+                Optional.ofNullable(capacity)
+        ));
+    }
 }

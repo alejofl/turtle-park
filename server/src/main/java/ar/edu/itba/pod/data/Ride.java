@@ -3,6 +3,7 @@ package ar.edu.itba.pod.data;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Ride {
@@ -71,5 +72,9 @@ public class Ride {
             throw new IllegalArgumentException();
         }
         ridesForDay.get(dayOfYear).cancelBooking(slot, visitor);
+    }
+
+    public Optional<AvailabilityInformation> getAvailabilityForSlot(int dayOfYear, LocalTime slot) {
+        return ridesForDay.get(dayOfYear).getAvailabilityForSlot(slot);
     }
 }

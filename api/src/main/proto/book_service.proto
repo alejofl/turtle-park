@@ -9,7 +9,7 @@ option java_multiple_files = true;
 
 service BookService {
   rpc getRides(commons.Empty) returns (RideResponse);
-  rpc getAvailability(AvailabilityRequest) returns (commons.Empty);
+  rpc getAvailability(AvailabilityRequest) returns (AvailabilityResponse);
   rpc bookRide(BookingRequest) returns (BookingResponse);
   rpc confirmBooking(BookingRequest) returns (commons.Empty);
   rpc cancelBooking(BookingRequest) returns (commons.Empty);
@@ -48,6 +48,18 @@ message AvailabilityRequest {
     MultipleSlotAvailabilityRequest multipleSlotAvailability = 3;
     MultipleRidesAvailabilityRequest multipleRidesAvailability = 4;
   }
+}
+
+message AvailabilityInformation {
+  string rideName = 1;
+  string slot = 2;
+  int32 confirmedBookings = 3;
+  int32 pendingBookings = 4;
+  optional int32 slotCapacity = 5;
+}
+
+message AvailabilityResponse {
+  repeated AvailabilityInformation data = 2;
 }
 
 message BookingRequest {

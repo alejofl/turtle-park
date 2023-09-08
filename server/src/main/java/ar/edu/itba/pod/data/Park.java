@@ -96,4 +96,30 @@ public class Park {
         }
         rides.get(rideName).cancelBooking(dayOfYear, slot, visitors.get(dayOfYear).get(visitorId));
     }
+
+    public Optional<AvailabilityInformation> getAvailabilityForSlot(String rideName, int dayOfYear, LocalTime slot) {
+        if (!rides.containsKey(rideName) || !Util.isValidDayOfYear(dayOfYear)) {
+            throw new IllegalArgumentException();
+        }
+        return rides.get(rideName).getAvailabilityForSlot(dayOfYear, slot);
+    }
+
+    public List<AvailabilityInformation> getAvailabilityForSlot(String rideName, int dayOfYear, LocalTime startingSlot, LocalTime endingSlot) {
+        if (endingSlot.isBefore(startingSlot)) {
+            throw new IllegalArgumentException();
+        }
+        List<AvailabilityInformation> ans = new ArrayList<>();
+        for (LocalTime i = startingSlot; i.isBefore(endingSlot); i = i.plusMinutes(rides.get(rideName).getSlotSize())) {
+            getAvailabilityForSlot(rideName, dayOfYear, i).ifPresent(ans::add);
+        }
+        return ans;
+    }
+
+    public List<AvailabilityInformation> getAvailabilityForSlot(int dayOfYear, LocalTime startingSlot, LocalTime endingSlot) {
+        List<AvailabilityInformation> ans = new ArrayList<>();
+        for(String r : rides.keySet()) {
+            ans.addAll(getAvailabilityForSlot(r, dayOfYear, startingSlot, endingSlot));
+        }
+        return ans;
+    }
 }
