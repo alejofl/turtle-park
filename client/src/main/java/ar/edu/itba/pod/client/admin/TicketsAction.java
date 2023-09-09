@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.client.admin;
 
 import ar.edu.itba.pod.client.Action;
+import io.grpc.ManagedChannel;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class  TicketsAction extends Action {
     }
 
     @Override
-    public void run() {
+    public void run(ManagedChannel channel) {
         //TODO
     }
 }

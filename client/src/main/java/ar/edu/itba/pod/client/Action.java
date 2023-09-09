@@ -1,5 +1,7 @@
 package ar.edu.itba.pod.client;
 
+import io.grpc.ManagedChannel;
+
 import java.util.List;
 
 public abstract class Action {
@@ -9,7 +11,7 @@ public abstract class Action {
         this.argumentsForAction = argumentsForAction;
     }
 
-    public abstract void run();
+    public abstract void run(ManagedChannel channel);
 
     public boolean hasValidArguments() {
         for (String arg : argumentsForAction) {

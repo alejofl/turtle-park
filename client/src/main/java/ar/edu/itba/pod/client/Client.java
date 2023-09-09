@@ -30,7 +30,7 @@ public abstract class Client implements Closeable {
     }
 
     public void run() {
-        action.run();
+        action.run(channel);
     }
 
     public abstract Action getActionClass();
