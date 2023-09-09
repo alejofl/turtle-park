@@ -132,6 +132,7 @@ public class Park {
         for (Ride r : rides.values()) {
             r.getSuggestedCapacity(dayOfYear).ifPresent(ans::add);
         }
+        ans.sort(Comparator.comparingInt(SuggestedCapacityInformation::suggestedCapacity));
         return ans;
     }
 
