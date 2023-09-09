@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -30,9 +31,15 @@ public class RidesAction extends Action {
     public void run(ManagedChannel channel) {
         try (
                 ExecutorService service = Executors.newCachedThreadPool();
-                Stream<String> lines = Files.lines(Paths.get(System.getProperty("inPath")))
+                Stream<String> lines = Files.lines(Paths.get(System.getProperty("inPath"))).skip(1)
         ) {
+            AtomicBoolean firstLine = new AtomicBoolean(true);
             lines.forEach(line -> {
+                if (firstLine.get()) {
+                    firstLine.set(false);
+                    return;
+                }
+
                 try {
                     String[] fields = line.split(",");
                     if (fields.length != 4) {
