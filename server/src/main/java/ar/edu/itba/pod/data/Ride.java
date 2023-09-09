@@ -1,10 +1,10 @@
 package ar.edu.itba.pod.data;
 
 import java.time.LocalTime;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 
 public class Ride {
@@ -77,6 +77,14 @@ public class Ride {
 
     public Optional<AvailabilityInformation> getAvailabilityForSlot(int dayOfYear, LocalTime slot) {
         return ridesForDay.get(dayOfYear).getAvailabilityForSlot(slot);
+    }
+
+    public Optional<SuggestedCapacityInformation> getSuggestedCapacity(int dayOfYear) {
+        return ridesForDay.get(dayOfYear).getSuggestedCapacity();
+    }
+
+    public Optional<List<Booking>> getConfirmedBookings(int dayOfYear) {
+        return ridesForDay.get(dayOfYear).getConfirmedBookings();
     }
 
     public BlockingQueue<NotificationInformation> followBooking(int dayOfYear, Visitor visitor) {

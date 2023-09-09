@@ -1,7 +1,10 @@
 package ar.edu.itba.pod.data;
 
+import javax.swing.text.html.Option;
+import java.awt.print.Book;
 import java.util.*;
 import java.time.LocalTime;
+import java.util.function.Consumer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
@@ -207,6 +210,31 @@ public class RideForDay {
                 pendingBookings.get(slot).size(),
                 Optional.ofNullable(capacity)
         ));
+    }
+
+    public Optional<SuggestedCapacityInformation> getSuggestedCapacity() {
+        if (capacity == null) {
+            return Optional.empty();
+        }
+        Map.Entry<LocalTime, Queue<Visitor>> maxEntry = Collections.max(pendingBookings.entrySet(),
+                (Map.Entry<LocalTime, Queue<Visitor>> e1, Map.Entry<LocalTime, Queue<Visitor>> e2) -> Integer.valueOf(e1.getValue().size())
+                .compareTo(e2.getValue().size()));
+        int suggestedCapacity = maxEntry.getValue().size();
+        LocalTime slot = maxEntry.getKey();
+        return Optional.of( new SuggestedCapacityInformation(rideName, suggestedCapacity, slot));
+    }
+
+    public Optional<List<Booking>> getConfirmedBookings() {
+        if (confirmedBookings.isEmpty()) {
+            return null;
+        }
+        List<Booking> ans = new ArrayList<>();
+        for (Set<Booking> bookings : confirmedBookings.values()) {
+            for (Booking b : bookings) {
+                ans.add(b);
+            }
+        }
+        return Optional.of(ans);
     }
 
     public BlockingQueue<NotificationInformation> followBooking(Visitor visitor) {

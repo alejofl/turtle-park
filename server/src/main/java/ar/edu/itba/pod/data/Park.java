@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.data;
 
+import ar.edu.itba.pod.query.SuggestedCapacity;
 import ar.edu.itba.pod.server.Util;
 
 import java.time.LocalTime;
@@ -121,6 +122,30 @@ public class Park {
         for(String r : rides.keySet()) {
             ans.addAll(getAvailabilityForSlot(r, dayOfYear, startingSlot, endingSlot));
         }
+        return ans;
+    }
+
+    public List<SuggestedCapacityInformation> getSuggestedCapacities(int dayOfYear) {
+        if (!Util.isValidDayOfYear(dayOfYear)) {
+            throw new IllegalArgumentException();
+        }
+        List<SuggestedCapacityInformation> ans = new ArrayList<>();
+        for (Ride r : rides.values()) {
+            r.getSuggestedCapacity(dayOfYear).ifPresent(ans::add);
+        }
+        ans.sort(Comparator.comparingInt(SuggestedCapacityInformation::suggestedCapacity));
+        return ans;
+    }
+
+    public List<Booking> getConfirmedBookings(int dayOfYear) {
+        if (!Util.isValidDayOfYear(dayOfYear)) {
+            throw new IllegalArgumentException();
+        }
+        List<Booking> ans = new ArrayList<>();
+        for (Ride r : rides.values()) {
+            r.getConfirmedBookings(dayOfYear).ifPresent(ans::addAll);
+        }
+        Collections.sort(ans);
         return ans;
     }
 

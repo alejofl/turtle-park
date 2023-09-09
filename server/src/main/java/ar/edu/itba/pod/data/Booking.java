@@ -2,6 +2,7 @@ package ar.edu.itba.pod.data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.UUID;
 
 public class Booking implements Comparable<Booking> {
     private final String rideName;
@@ -16,6 +17,18 @@ public class Booking implements Comparable<Booking> {
         this.slot = slot;
         this.timestamp = LocalDateTime.now();
         this.visitor = visitor;
+    }
+
+    public String getRideName() {
+        return rideName;
+    }
+
+    public LocalTime getSlot() {
+        return slot;
+    }
+
+    public Visitor getVisitor() {
+        return visitor;
     }
 
     @Override
