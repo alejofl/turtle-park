@@ -1,10 +1,7 @@
 package ar.edu.itba.pod.data;
 
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class Ride {
     private final String name;
@@ -80,5 +77,9 @@ public class Ride {
 
     public Optional<SuggestedCapacityInformation> getSuggestedCapacity(int dayOfYear) {
         return ridesForDay.get(dayOfYear).getSuggestedCapacity();
+    }
+
+    public Optional<List<Booking>> getConfirmedBookings(int dayOfYear) {
+        return ridesForDay.get(dayOfYear).getConfirmedBookings();
     }
 }

@@ -46,4 +46,8 @@ public class Visitor {
     public void cancelBooking() {
         confirmedBookings--;
     }
+
+    public UUID getId() {
+        return id;
+    }
 }

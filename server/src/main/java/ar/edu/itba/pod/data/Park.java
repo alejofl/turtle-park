@@ -134,4 +134,16 @@ public class Park {
         }
         return ans;
     }
+
+    public List<Booking> getConfirmedBookings(int dayOfYear) {
+        if (!Util.isValidDayOfYear(dayOfYear)) {
+            throw new IllegalArgumentException();
+        }
+        List<Booking> ans = new ArrayList<>();
+        for (Ride r : rides.values()) {
+            r.getConfirmedBookings(dayOfYear).ifPresent(ans::addAll);
+        }
+        Collections.sort(ans);
+        return ans;
+    }
 }

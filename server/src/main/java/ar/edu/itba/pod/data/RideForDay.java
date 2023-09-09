@@ -1,8 +1,10 @@
 package ar.edu.itba.pod.data;
 
 import javax.swing.text.html.Option;
+import java.awt.print.Book;
 import java.util.*;
 import java.time.LocalTime;
+import java.util.function.Consumer;
 
 public class RideForDay {
     private final String rideName;
@@ -137,5 +139,18 @@ public class RideForDay {
         int suggestedCapacity = maxEntry.getValue().size();
         LocalTime slot = maxEntry.getKey();
         return Optional.of( new SuggestedCapacityInformation(rideName, suggestedCapacity, slot));
+    }
+
+    public Optional<List<Booking>> getConfirmedBookings() {
+        if (confirmedBookings.isEmpty()) {
+            return null;
+        }
+        List<Booking> ans = new ArrayList<>();
+        for (Set<Booking> bookings : confirmedBookings.values()) {
+            for (Booking b : bookings) {
+                ans.add(b);
+            }
+        }
+        return Optional.of(ans);
     }
 }
