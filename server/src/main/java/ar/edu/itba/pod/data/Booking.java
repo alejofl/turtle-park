@@ -19,18 +19,6 @@ public class Booking implements Comparable<Booking> {
         this.visitor = visitor;
     }
 
-    public String getRideName() {
-        return rideName;
-    }
-
-    public LocalTime getSlot() {
-        return slot;
-    }
-
-    public Visitor getVisitor() {
-        return visitor;
-    }
-
     @Override
     public int compareTo(Booking o) {
         return timestamp.compareTo(o.timestamp);
