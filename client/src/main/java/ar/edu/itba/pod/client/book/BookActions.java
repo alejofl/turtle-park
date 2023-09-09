@@ -11,8 +11,8 @@ public enum BookActions {
     AVAILABILITY_MULTIPLE_SLOT("availability", new AvailabilityAction(List.of("ride", "day", "slot", "slotTo"), AvailabilityAction.Type.MULTIPLE_SLOT)),
     AVAILABILITY_MULTIPLE_RIDES("availability", new AvailabilityAction(List.of("day", "slot", "slotTo"), AvailabilityAction.Type.MULTIPLE_RIDES)),
     BOOK("book", new BookAction(List.of("visitor", "ride", "day", "slot"))),
-    CONFIRM("confirm", new BookAction(List.of("visitor", "ride", "day", "slot"))),
-    CANCEL("cancel", new BookAction(List.of("visitor", "ride", "day", "slot")));
+    CONFIRM("confirm", new ConfirmAction(List.of("visitor", "ride", "day", "slot"))),
+    CANCEL("cancel", new CancelAction(List.of("visitor", "ride", "day", "slot")));
 
     private final String actionName;
 
