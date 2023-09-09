@@ -73,6 +73,17 @@ public class RidesAction extends Action {
         return super.hasValidArguments() && Files.exists(Paths.get(System.getProperty("inPath")));
     }
 
+    @Override
+    public String getUsageMessage() {
+        return """
+                Usage:
+                    $> ./admin-cli
+                        -DserverAddress=xx.xx.xx.xx:yyyy
+                        -Daction=rides
+                        -DinPath=filename
+                """;
+    }
+
     private static class AddRideRunnable implements Runnable {
         private final AdminServiceBlockingStub stub;
         private final AtomicInteger successfulCalls;

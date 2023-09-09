@@ -14,4 +14,18 @@ public class BookAction extends Action {
     public void run(ManagedChannel channel) {
         //TODO
     }
+
+    @Override
+    public String getUsageMessage() {
+        return """
+                Usage:
+                    $> ./book-cli
+                        -DserverAddress=xx.xx.xx.xx:yyyy
+                        -Daction=book
+                        -Dday=dayOfYear
+                        -Dride=rideName
+                        -Dvisitor=visitorId
+                        -Dslot=bookingSlot
+                """;
+    }
 }

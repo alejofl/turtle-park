@@ -50,4 +50,16 @@ public class CapacityAction extends Action {
             }
         }
     }
+
+    @Override
+    public String getUsageMessage() {
+        return """
+                Usage:
+                    $> ./query-cli
+                        -DserverAddress=xx.xx.xx.xx:yyyy
+                        -Daction=capacity
+                        -Dday=dayOfYear
+                        -DoutPath=filePath
+                """;
+    }
 }

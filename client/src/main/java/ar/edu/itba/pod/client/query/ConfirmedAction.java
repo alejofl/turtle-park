@@ -14,4 +14,16 @@ public class ConfirmedAction extends Action {
     public void run(ManagedChannel channel) {
         //TODO
     }
+
+    @Override
+    public String getUsageMessage() {
+        return """
+                Usage:
+                    $> ./query-cli
+                        -DserverAddress=xx.xx.xx.xx:yyyy
+                        -Daction=confirmed
+                        -Dday=dayOfYear
+                        -DoutPath=filePath
+                """;
+    }
 }

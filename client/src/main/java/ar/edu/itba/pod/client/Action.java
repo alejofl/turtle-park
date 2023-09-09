@@ -21,4 +21,6 @@ public abstract class Action {
         }
         return true;
     }
+
+    public abstract String getUsageMessage();
 }
