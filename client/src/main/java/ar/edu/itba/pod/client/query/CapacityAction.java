@@ -35,14 +35,14 @@ public class CapacityAction extends Action {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
-        String firstLine = String.format("Slot | Capacity | Attraction\n");
+        String firstLine = String.format("%-5s | %s | %s\n", "Slot", "Capacity", "Attraction");
         try {
             Files.writeString(file, firstLine, StandardOpenOption.APPEND);
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
         for(SuggestedCapacity s : response.getCapacitiesList()) {
-            String line = String.format("%s | %8d | %s\n", s.getSlot(), s.getSuggestedCapacity(), s.getRideName());
+            String line = String.format("%-5s | %8d | %s\n", s.getSlot(), s.getSuggestedCapacity(), s.getRideName());
             try {
                 Files.writeString(file, line, StandardOpenOption.APPEND);
             } catch (IOException e) {
@@ -61,5 +61,15 @@ public class CapacityAction extends Action {
                         -Dday=dayOfYear
                         -DoutPath=filePath
                 """;
+    }
+
+    @Override
+    public boolean hasValidArguments() {
+        try {
+            Integer.parseInt(System.getProperty("day"));
+            return super.hasValidArguments();
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

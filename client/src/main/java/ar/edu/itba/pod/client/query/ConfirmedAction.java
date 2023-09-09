@@ -20,7 +20,7 @@ public class ConfirmedAction extends Action {
     public void run(ManagedChannel channel) {
         QueryServiceGrpc.QueryServiceBlockingStub stub = QueryServiceGrpc.newBlockingStub(channel);
         Integer dayOfYear = Integer.valueOf(System.getProperty("day"));
-        QueryRequest request = QueryRequest.newBuilder().setDayOfYear(dayOfYear.intValue()).build();
+        QueryRequest request = QueryRequest.newBuilder().setDayOfYear(dayOfYear).build();
         ConfirmedBookingResponse response = stub.getConfirmedBookings(request);
 
         Path file = Paths.get("confirmedBooking.txt");
@@ -30,7 +30,7 @@ public class ConfirmedAction extends Action {
             System.err.println(e.getMessage());
         }
 
-        String firstLine = String.format("%s | %-36s | %s\n", "Slot", "Visitor", "Attraction");
+        String firstLine = String.format("%-5s | %-36s | %s\n", "Slot", "Visitor", "Attraction");
         try {
             Files.writeString(file, firstLine, StandardOpenOption.APPEND);
         } catch (IOException e) {
@@ -57,5 +57,15 @@ public class ConfirmedAction extends Action {
                         -Dday=dayOfYear
                         -DoutPath=filePath
                 """;
+    }
+
+    @Override
+    public boolean hasValidArguments() {
+        try {
+            Integer.parseInt(System.getProperty("day"));
+            return super.hasValidArguments();
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
