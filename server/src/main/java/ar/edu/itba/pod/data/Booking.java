@@ -45,4 +45,24 @@ public class Booking implements Comparable<Booking> {
         result = 31 * result + visitor.hashCode();
         return result;
     }
+
+    public String getRideName() {
+        return rideName;
+    }
+
+    public int getDayOfYear() {
+        return dayOfYear;
+    }
+
+    public LocalTime getSlot() {
+        return slot;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public Visitor getVisitor() {
+        return visitor;
+    }
 }

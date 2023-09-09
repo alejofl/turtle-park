@@ -4,6 +4,7 @@ import ar.edu.itba.pod.server.Util;
 
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 
@@ -121,5 +122,21 @@ public class Park {
             ans.addAll(getAvailabilityForSlot(r, dayOfYear, startingSlot, endingSlot));
         }
         return ans;
+    }
+
+    public BlockingQueue<NotificationInformation> followBooking(String rideName, UUID visitorId, int dayOfYear) {
+        if (!rides.containsKey(rideName) || !Util.isValidDayOfYear(dayOfYear) || !visitors.containsKey(dayOfYear) ||
+                !visitors.get(dayOfYear).containsKey(visitorId)) {
+            throw new IllegalArgumentException();
+        }
+        return rides.get(rideName).followBooking(dayOfYear, visitors.get(dayOfYear).get(visitorId));
+    }
+
+    public void unfollowBooking(String rideName, int dayOfYear, UUID visitorId) {
+        if (!rides.containsKey(rideName) || !Util.isValidDayOfYear(dayOfYear) || !visitors.containsKey(dayOfYear) ||
+                !visitors.get(dayOfYear).containsKey(visitorId)) {
+            throw new IllegalArgumentException();
+        }
+        rides.get(rideName).unfollowBooking(dayOfYear, visitors.get(dayOfYear).get(visitorId));
     }
 }
