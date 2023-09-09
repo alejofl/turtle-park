@@ -77,4 +77,8 @@ public class Ride {
     public Optional<AvailabilityInformation> getAvailabilityForSlot(int dayOfYear, LocalTime slot) {
         return ridesForDay.get(dayOfYear).getAvailabilityForSlot(slot);
     }
+
+    public Optional<SuggestedCapacityInformation> getSuggestedCapacity(int dayOfYear) {
+        return ridesForDay.get(dayOfYear).getSuggestedCapacity();
+    }
 }
