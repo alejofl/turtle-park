@@ -39,22 +39,36 @@ public class SlotsAction extends Action {
                     response.getPendingBookings(),
                     response.getCancelledBookings()
             );
-        } catch (IllegalArgumentException e) {
-            throw new StatusRuntimeException(Status.INVALID_ARGUMENT);
         } catch (StatusRuntimeException e) {
             if (e.getStatus() == Status.INVALID_ARGUMENT) {
-                System.err.println(Util.INVALID_ARGUMENT_MESSAGE);
-                System.err.println("""
-                            Usage:
-                                $> ./admin-cli
-                                        -DserverAddress=xx.xx.xx.xx:yyyy
-                                        -Daction=[ rides | tickets | slots ]
-                                        [ -DinPath=filename | -Dride=rideName | -Dday=dayOfYear | -Dcapacity=amount ]
-                            """);
-                System.exit(2);
+                throw new IllegalArgumentException();
             }
             System.err.println(Util.GENERIC_ERROR_MESSAGE);
             System.exit(1);
         }
+    }
+
+    @Override
+    public boolean hasValidArguments() {
+        try {
+            Integer.parseInt(System.getProperty("capacity"));
+            Integer.parseInt(System.getProperty("day"));
+            return super.hasValidArguments();
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String getUsageMessage() {
+        return """
+                Usage:
+                    $> ./admin-cli
+                        -DserverAddress=xx.xx.xx.xx:yyyy
+                        -Daction=slots
+                        -Dride=rideName
+                        -Dday=dayOfYear
+                        -Dcapacity=amount
+                """;
     }
 }

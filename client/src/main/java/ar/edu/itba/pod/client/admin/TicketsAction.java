@@ -61,6 +61,17 @@ public class  TicketsAction extends Action {
         System.out.printf("Cannot add %d passes\n%d passes added\n", failedCalls.get(), successfulCalls.get());
     }
 
+    @Override
+    public String getUsageMessage() {
+        return """
+                Usage:
+                    $> ./admin-cli
+                        -DserverAddress=xx.xx.xx.xx:yyyy
+                        -Daction=tickets
+                        -DinPath=filename
+                """;
+    }
+
     private static class AddTicketRunnable implements Runnable {
         private final AdminServiceGrpc.AdminServiceBlockingStub stub;
         private final AtomicInteger successfulCalls;

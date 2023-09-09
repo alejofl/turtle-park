@@ -33,6 +33,10 @@ public abstract class Client implements Closeable {
         action.run(channel);
     }
 
+    public String getUsageMessage() {
+        return action.getUsageMessage();
+    }
+
     public abstract Action getActionClass();
 
     @Override
