@@ -30,6 +30,10 @@ public class Visitor {
         return id.equals(visitor.id);
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     @Override
     public int hashCode() {
         return id.hashCode();
@@ -45,9 +49,5 @@ public class Visitor {
 
     public void cancelBooking() {
         confirmedBookings--;
-    }
-
-    public UUID getId() {
-        return id;
     }
 }

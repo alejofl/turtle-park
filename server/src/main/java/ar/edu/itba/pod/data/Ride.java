@@ -2,6 +2,10 @@ package ar.edu.itba.pod.data;
 
 import java.time.LocalTime;
 import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.BlockingQueue;
 
 public class Ride {
     private final String name;
@@ -81,5 +85,17 @@ public class Ride {
 
     public Optional<List<Booking>> getConfirmedBookings(int dayOfYear) {
         return ridesForDay.get(dayOfYear).getConfirmedBookings();
+    }
+
+    public BlockingQueue<NotificationInformation> followBooking(int dayOfYear, Visitor visitor) {
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
+        return ridesForDay.get(dayOfYear).followBooking(visitor);
+    }
+
+    public void unfollowBooking(int dayOfYear, Visitor visitor) {
+        if (!ridesForDay.containsKey(dayOfYear)) {
+            throw new IllegalArgumentException();
+        }
+        ridesForDay.get(dayOfYear).unfollowBooking(visitor);
     }
 }

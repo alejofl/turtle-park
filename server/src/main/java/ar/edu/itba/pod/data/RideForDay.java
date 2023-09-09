@@ -5,12 +5,15 @@ import java.awt.print.Book;
 import java.util.*;
 import java.time.LocalTime;
 import java.util.function.Consumer;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Stream;
 
 public class RideForDay {
     private final String rideName;
     private final int dayOfYear;
     private Integer capacity = null;
-    private final Set<Visitor> notifications = new HashSet<>();
+    private final Map<Visitor, BlockingQueue<NotificationInformation>> notifications = new HashMap<>();
     private final Map<LocalTime, Queue<Visitor>> pendingBookings = new HashMap<>();
     private final Map<LocalTime, Set<Booking>> confirmedBookings = new HashMap<>();
 
@@ -38,6 +41,7 @@ public class RideForDay {
             for (int i = 0; i < capacity && !pendings.isEmpty(); i++) {
                 Visitor visitor = pendings.poll();
                 confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor));
+                notifyConfirmedBooking(slot, visitor);
                 visitor.confirmBooking();
                 confirmedBookingsCount++;
             }
@@ -50,21 +54,95 @@ public class RideForDay {
                     Visitor visitor = pendings.poll();
                     if (visitor.getPassType() == PassType.HALF_DAY && slots.get(j).isAfter(Visitor.HALF_DAY_CUTOFF) ){
                         cancelledBookingCount++;
+                        notifyCancelledBooking(slots.get(i), visitor);
                     } else {
                         pendingBookings.get(slots.get(j)).add(visitor);
+                        notifyMovedBooking(slots.get(i), slots.get(j), visitor);
                         pendingBookingsCount++;
                         occupiedCapacity++;
                     }
                 }
             }
             while (!pendings.isEmpty()) {
-                pendings.poll();
+                notifyCancelledBooking(slots.get(i), pendings.poll());
                 cancelledBookingCount++;
             }
         }
+        notifyCapacityAnnounced(capacity);
         return new CapacityInformation(pendingBookingsCount, confirmedBookingsCount, cancelledBookingCount);
     }
 
+    private void notifyCapacityAnnounced(int capacity) {
+        for (Map.Entry<Visitor, BlockingQueue<NotificationInformation>> entry : notifications.entrySet()) {
+            entry.getValue().add(new NotificationInformation(
+                    entry.getKey().getId(),
+                    rideName,
+                    dayOfYear,
+                    NotificationStatus.CAPACITY_ANNOUNCED,
+                    null,
+                    null,
+                    capacity
+            ));
+        }
+    }
+
+    private void notifyMovedBooking(LocalTime slot, LocalTime newSlot, Visitor visitor) {
+        if (notifications.containsKey(visitor)) {
+            notifications.get(visitor).add(new NotificationInformation(
+                    visitor.getId(),
+                    rideName,
+                    dayOfYear,
+                    NotificationStatus.BOOKING_MOVED,
+                    slot,
+                    newSlot,
+                    null
+            ));
+        }
+    }
+
+    private void notifyConfirmedBooking(LocalTime slot, Visitor visitor) {
+        if (notifications.containsKey(visitor)) {
+            notifications.get(visitor).add(new NotificationInformation(
+                    visitor.getId(),
+                    rideName,
+                    dayOfYear,
+                    NotificationStatus.BOOKING_CONFIRMED,
+                    slot,
+                    null,
+                    null
+            ));
+            unfollowBooking(visitor);
+        }
+    }
+
+    private void notifyCancelledBooking(LocalTime slot, Visitor visitor) {
+        if (notifications.containsKey(visitor)) {
+            notifications.get(visitor).add(new NotificationInformation(
+                    visitor.getId(),
+                    rideName,
+                    dayOfYear,
+                    NotificationStatus.BOOKING_CANCELLED,
+                    slot,
+                    null,
+                    null
+            ));
+            unfollowBooking(visitor);
+        }
+    }
+
+    private void notifyPendingBooking(LocalTime slot, Visitor visitor) {
+        if (notifications.containsKey(visitor)) {
+            notifications.get(visitor).add(new NotificationInformation(
+                    visitor.getId(),
+                    rideName,
+                    dayOfYear,
+                    NotificationStatus.BOOKING_PENDING,
+                    slot,
+                    null,
+                    null
+            ));
+        }
+    }
 
     public Integer getCapacity() {
         return capacity;
@@ -84,9 +162,11 @@ public class RideForDay {
         }
         if (capacity == null) {
             pendingBookings.get(slot).add(visitor);
+            notifyPendingBooking(slot, visitor);
             return false;
         } else if (confirmedBookings.get(slot).size() < capacity) {
             confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor));
+            notifyConfirmedBooking(slot, visitor);
             visitor.confirmBooking();
             return true;
         }
@@ -100,6 +180,7 @@ public class RideForDay {
         }
         pendingBookings.get(slot).remove(visitor);
         confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor));
+        notifyConfirmedBooking(slot, visitor);
         visitor.confirmBooking();
     }
 
@@ -107,10 +188,12 @@ public class RideForDay {
         if (confirmedBookings.get(slot).contains(new Booking(rideName, dayOfYear, slot, visitor))) {
             confirmedBookings.get(slot).remove(new Booking(rideName, dayOfYear, slot, visitor));
             visitor.cancelBooking();
+            notifyCancelledBooking(slot, visitor);
             return;
         }
         if (pendingBookings.get(slot).contains(visitor)) {
             pendingBookings.get(slot).remove(visitor);
+            notifyCancelledBooking(slot, visitor);
             return;
         }
         throw new IllegalArgumentException();
@@ -152,5 +235,29 @@ public class RideForDay {
             }
         }
         return Optional.of(ans);
+    }
+
+    public BlockingQueue<NotificationInformation> followBooking(Visitor visitor) {
+        if (notifications.containsKey(visitor)) {
+            throw new IllegalArgumentException();
+        }
+        notifications.put(visitor, new LinkedBlockingQueue<>());
+        return notifications.get(visitor);
+    }
+
+    public void unfollowBooking(Visitor visitor) {
+        if (!notifications.containsKey(visitor)) {
+            throw new IllegalArgumentException();
+        }
+        notifications.get(visitor).add(new NotificationInformation(
+                null,
+                null,
+                0,
+                NotificationStatus.POISON_PILL,
+                null,
+                null,
+                null
+        ));
+        notifications.remove(visitor);
     }
 }

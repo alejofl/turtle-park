@@ -8,7 +8,7 @@ option java_package = "ar.edu.itba.pod.notification";
 option java_multiple_files = true;
 
 service NotificationService {
-  rpc followBooking(NotificationRequest) returns (commons.Empty);
+  rpc followBooking(NotificationRequest) returns (stream NotificationResponse);
   rpc unfollowBooking(NotificationRequest) returns (commons.Empty);
 }
 
@@ -16,4 +16,23 @@ message NotificationRequest {
   string rideName = 1;
   int32 dayOfYear = 2;
   string userId = 3;
+}
+
+message NotificationResponse {
+  string userId = 1;
+  string rideName = 2;
+  int32 dayOfYear = 3;
+  NotificationStatus status = 4;
+  optional string slot = 5;
+  optional string newSlot = 6;
+  optional int32 capacity = 7;
+}
+
+enum NotificationStatus {
+  UNDEFINED = 0;
+  BOOKING_PENDING = 1;
+  BOOKING_CONFIRMED = 2;
+  BOOKING_CANCELLED = 3;
+  BOOKING_MOVED = 4;
+  CAPACITY_ANNOUNCED = 5;
 }
