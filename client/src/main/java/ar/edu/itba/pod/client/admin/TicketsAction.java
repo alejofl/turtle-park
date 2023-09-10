@@ -37,7 +37,7 @@ public class  TicketsAction extends Action {
         ) {
             lines.forEach(line -> {
                 try {
-                    String[] fields = line.split(",");
+                    String[] fields = line.split(";");
                     if (fields.length != 3) {
                         failedCalls.getAndIncrement();
                     } else {

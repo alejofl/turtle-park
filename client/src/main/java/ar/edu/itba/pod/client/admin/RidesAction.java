@@ -33,15 +33,9 @@ public class RidesAction extends Action {
                 ExecutorService service = Executors.newCachedThreadPool();
                 Stream<String> lines = Files.lines(Paths.get(System.getProperty("inPath"))).skip(1)
         ) {
-            AtomicBoolean firstLine = new AtomicBoolean(true);
             lines.forEach(line -> {
-                if (firstLine.get()) {
-                    firstLine.set(false);
-                    return;
-                }
-
                 try {
-                    String[] fields = line.split(",");
+                    String[] fields = line.split(";");
                     if (fields.length != 4) {
                         failedCalls.getAndIncrement();
                     } else {

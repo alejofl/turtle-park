@@ -2,4 +2,4 @@
 
 MAIN_CLASS="ar.edu.itba.pod.client.notification.NotificationClient"
 
-java -cp 'lib/jars/*' $MAIN_CLASS $*
+java $* -cp 'lib/jars/*' $MAIN_CLASS
