@@ -42,7 +42,7 @@ public class Ride {
         return ridesForDay.get(dayOfYear).setCapacity(capacity);
     }
 
-    public boolean hasCapacityForDay(int dayOfYear) {
+    public synchronized boolean hasCapacityForDay(int dayOfYear) {
         return ridesForDay.containsKey(dayOfYear) && ridesForDay.get(dayOfYear).hasCapacity();
     }
 
@@ -56,43 +56,43 @@ public class Ride {
         return false;
     }
 
-    public boolean bookForDay(int dayOfYear, LocalTime slot, Visitor visitor) {
+    public synchronized boolean bookForDay(int dayOfYear, LocalTime slot, Visitor visitor) {
         ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
         return ridesForDay.get(dayOfYear).bookRide(slot, visitor);
     }
 
-    public void confirmBooking(int dayOfYear, LocalTime slot, Visitor visitor) {
+    public synchronized void confirmBooking(int dayOfYear, LocalTime slot, Visitor visitor) {
         if (!ridesForDay.containsKey(dayOfYear)) {
             throw new IllegalArgumentException();
         }
         ridesForDay.get(dayOfYear).confirmBooking(slot, visitor);
     }
 
-    public void cancelBooking(int dayOfYear, LocalTime slot, Visitor visitor) {
+    public synchronized void cancelBooking(int dayOfYear, LocalTime slot, Visitor visitor) {
         if (!ridesForDay.containsKey(dayOfYear)) {
             throw new IllegalArgumentException();
         }
         ridesForDay.get(dayOfYear).cancelBooking(slot, visitor);
     }
 
-    public Optional<AvailabilityInformation> getAvailabilityForSlot(int dayOfYear, LocalTime slot) {
+    public synchronized Optional<AvailabilityInformation> getAvailabilityForSlot(int dayOfYear, LocalTime slot) {
         return ridesForDay.get(dayOfYear).getAvailabilityForSlot(slot);
     }
 
-    public Optional<SuggestedCapacityInformation> getSuggestedCapacity(int dayOfYear) {
+    public synchronized Optional<SuggestedCapacityInformation> getSuggestedCapacity(int dayOfYear) {
         return ridesForDay.get(dayOfYear).getSuggestedCapacity();
     }
 
-    public Optional<List<Booking>> getConfirmedBookings(int dayOfYear) {
+    public synchronized Optional<List<Booking>> getConfirmedBookings(int dayOfYear) {
         return ridesForDay.get(dayOfYear).getConfirmedBookings();
     }
 
-    public BlockingQueue<NotificationInformation> followBooking(int dayOfYear, Visitor visitor) {
+    public synchronized BlockingQueue<NotificationInformation> followBooking(int dayOfYear, Visitor visitor) {
         ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
         return ridesForDay.get(dayOfYear).followBooking(visitor);
     }
 
-    public void unfollowBooking(int dayOfYear, Visitor visitor) {
+    public synchronized void unfollowBooking(int dayOfYear, Visitor visitor) {
         if (!ridesForDay.containsKey(dayOfYear)) {
             throw new IllegalArgumentException();
         }

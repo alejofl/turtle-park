@@ -2,22 +2,22 @@ package ar.edu.itba.pod.data;
 
 import java.time.LocalTime;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Visitor {
     private final UUID id;
     private final PassType passType;
-    private int confirmedBookings;
+    private final AtomicInteger confirmedBookings = new AtomicInteger();
 
     public static final LocalTime HALF_DAY_CUTOFF = LocalTime.of(14,0,0);
 
     public Visitor(UUID id, PassType passType) {
         this.id = id;
         this.passType = passType;
-        this.confirmedBookings = 0;
     }
 
     public boolean canBookRide(LocalTime slot) {
-        return passType.isValid(confirmedBookings, slot);
+        return passType.isValid(confirmedBookings.get(), slot);
     }
 
     @Override
@@ -44,10 +44,10 @@ public class Visitor {
     }
 
     public void confirmBooking() {
-        confirmedBookings++;
+        confirmedBookings.getAndIncrement();
     }
 
     public void cancelBooking() {
-        confirmedBookings--;
+        confirmedBookings.getAndDecrement();
     }
 }
