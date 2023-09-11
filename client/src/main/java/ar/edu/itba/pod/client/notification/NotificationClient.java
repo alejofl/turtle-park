@@ -8,13 +8,20 @@ import ar.edu.itba.pod.client.query.QueryClient;
 import java.io.IOException;
 
 public class NotificationClient extends Client {
+    public static final String USAGE_MESSAGE = """
+                                                Usage:
+                                                    $> ./notif-cli
+                                                        -DserverAddress=xx.xx.xx.xx:yyyy
+                                                        -Daction=[ follow | unfollow ]
+                                                """;
+
     @Override
     public Action getActionClass() {
         return NotificationActions.getAction(System.getProperty("action")).getActionClass();
     }
 
     public static void main(String[] args) throws IOException {
-        String usageMessage = null;
+        String usageMessage = NotificationClient.USAGE_MESSAGE;
         try (Client client = new NotificationClient()) {
             usageMessage = client.getUsageMessage();
             client.run();

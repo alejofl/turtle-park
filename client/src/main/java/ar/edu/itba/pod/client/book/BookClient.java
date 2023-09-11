@@ -8,13 +8,20 @@ import ar.edu.itba.pod.client.notification.NotificationClient;
 import java.io.IOException;
 
 public class BookClient extends Client {
+    public static final String USAGE_MESSAGE = """
+                                                Usage:
+                                                    $> ./book-cli
+                                                        -DserverAddress=xx.xx.xx.xx:yyyy
+                                                        -Daction=[ attractions | availability | book | cancel | confirm ]
+                                                """;
+
     @Override
     public Action getActionClass() {
         return BookActions.getAction(System.getProperty("action")).getActionClass();
     }
 
     public static void main(String[] args) throws IOException {
-        String usageMessage = null;
+        String usageMessage = BookClient.USAGE_MESSAGE;
         try (Client client = new BookClient()) {
             usageMessage = client.getUsageMessage();
             client.run();
