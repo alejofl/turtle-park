@@ -22,7 +22,7 @@ public class TurtleParkServer {
                 .addService(new QueryServant())
                 .build();
         server.start();
-
+        System.out.printf("Turtle Park Server is up and running on port %d\n", port);
         server.awaitTermination();
         Runtime.getRuntime().addShutdownHook(new Thread(server::shutdown));
     }
