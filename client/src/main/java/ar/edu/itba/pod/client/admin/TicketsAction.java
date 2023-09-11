@@ -60,7 +60,14 @@ public class  TicketsAction extends Action {
             System.err.println(Util.GENERIC_ERROR_MESSAGE);
             System.exit(2);
         }
-        System.out.printf("Cannot add %d passes\n%d passes added\n", failedCalls.get(), successfulCalls.get());
+        int failed = failedCalls.get();
+        int successful = successfulCalls.get();
+        if (failed > 0) {
+            System.out.printf("Cannot add %d passes\n", failed);
+        }
+        if (successful > 0) {
+            System.out.printf("%d passes added\n", successful);
+        }
     }
 
     @Override

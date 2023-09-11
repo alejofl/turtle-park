@@ -59,7 +59,14 @@ public class RidesAction extends Action {
             System.err.println(Util.GENERIC_ERROR_MESSAGE);
             System.exit(2);
         }
-        System.out.printf("Cannot add %d attractions\n%d attractions added\n", failedCalls.get(), successfulCalls.get());
+        int failed = failedCalls.get();
+        int successful = successfulCalls.get();
+        if (failed > 0) {
+            System.out.printf("Cannot add %d attractions\n", failed);
+        }
+        if (successful > 0) {
+            System.out.printf("%d attractions added\n", successful);
+        }
     }
 
     @Override
