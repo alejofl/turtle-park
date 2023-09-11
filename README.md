@@ -26,7 +26,7 @@ All client applications and the server are written in Java. The communication be
   * [3.5. Query Client](#35-query-client)
       * [3.5.1. Get suggested capacity for all rides of the park](#351-get-suggested-capacity-for-all-rides-of-the-park)
       * [3.5.2. Get a list of confirmed bookings](#352-get-a-list-of-confirmed-bookings)
-* [Final remarks](#final-remarks)
+* [4. Final Remarks](#4-final-remarks)
 
 <hr>
 
@@ -252,7 +252,7 @@ Slot  | Visitor                              | Attraction
 13:00 | 2af16ea7-4af1-47f6-bf46-8515de5a500f | Tron Lightcycle
 ```
 
-## Final remarks
+## 4. Final Remarks
 
 This project was done in an academic environment, as part of the curriculum of Distributed Objects Programming from Instituto Tecnológico de Buenos Aires (ITBA)
 
