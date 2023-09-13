@@ -1,14 +1,10 @@
 package ar.edu.itba.pod.data;
 
-import javax.swing.text.html.Option;
-import java.awt.print.Book;
 import java.util.*;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Stream;
 
 public class RideForDay {
     private final String rideName;
@@ -147,7 +143,7 @@ public class RideForDay {
                     null,
                     null
             ));
-            if (hasAnotherBooking(visitor)) {
+            if (!hasAnotherPendingBooking(visitor)) {
                 unfollowBooking(visitor);
             }
         }
@@ -170,7 +166,7 @@ public class RideForDay {
                     null,
                     null
             ));
-            if (hasAnotherBooking(visitor)) {
+            if (!hasAnotherPendingBooking(visitor)) {
                 unfollowBooking(visitor);
             }
         }
@@ -192,27 +188,14 @@ public class RideForDay {
         }
     }
 
-    private boolean hasAnotherBooking(Visitor visitor) {
+    private boolean hasAnotherPendingBooking(Visitor visitor) {
         boolean hasAnotherBooking = false;
         Set<Map.Entry<LocalTime, Queue<Visitor>>> pendings;
-        Set<Map.Entry<LocalTime, Set<Booking>>> confirmed;
         synchronized (pendingBookingsLock) {
             pendings = pendingBookings.entrySet();
         }
-        synchronized (confirmedBookingsLock) {
-            confirmed = confirmedBookings.entrySet();
-        }
         for (Map.Entry<LocalTime, Queue<Visitor>> entry : pendings) {
             if (entry.getValue().contains(visitor)) {
-                hasAnotherBooking = true;
-                break;
-            }
-        }
-        if (hasAnotherBooking) {
-            return true;
-        }
-        for (Map.Entry<LocalTime, Set<Booking>> entry : confirmed) {
-            if (entry.getValue().contains(new Booking(rideName, dayOfYear, entry.getKey(), visitor))) {
                 hasAnotherBooking = true;
                 break;
             }
