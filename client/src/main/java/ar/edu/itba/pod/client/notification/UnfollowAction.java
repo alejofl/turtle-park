@@ -31,7 +31,7 @@ public class UnfollowAction extends Action {
         } catch (StatusRuntimeException e) {
             if (e.getStatus() == Status.INVALID_ARGUMENT) {
                 throw new IllegalArgumentException();
-            } else if (e.getStatus() == Status.UNAVAILABLE) {
+            } else if (e.getStatus().getCode() == Status.UNAVAILABLE.getCode()) {
                 throw new ServerUnavailableException();
             }
             System.err.println(Util.GENERIC_ERROR_MESSAGE);
