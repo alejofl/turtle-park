@@ -87,21 +87,20 @@ public class AvailabilityAction extends Action {
             );
             AvailabilityResponse response = stub.getAvailability(request);
             System.out.printf("\033[1m%-5s | %8s  | %7s   | %9s | %s\033[0m\n", "Slot", "Capacity", "Pending", "Confirmed", "Attraction");
-            response.getDataList().stream().sorted((o1, o2) -> {
-                int result = o1.getSlot().compareTo(o2.getSlot());
-                if (result != 0) {
-                    result = o1.getRideName().compareTo(o2.getRideName());
-                }
-                return result;
-            }).map(avail -> String.format(
-                                            "%-5s | %8s  | %8d  | %9d | %s",
-                                            avail.getSlot(),
-                                            avail.hasSlotCapacity() ? String.valueOf(avail.getSlotCapacity()) : "X",
-                                            avail.getPendingBookings(),
-                                            avail.getConfirmedBookings(),
-                                            avail.getRideName()
-                                         )
-            ).forEach(System.out::println);
+            response.getDataList()
+                    .stream()
+                    .sorted(
+                            Comparator.comparing(AvailabilityInformation::getSlot)
+                                    .thenComparing(AvailabilityInformation::getRideName)
+                    ).map(avail -> String.format(
+                                                    "%-5s | %8s  | %8d  | %9d | %s",
+                                                    avail.getSlot(),
+                                                    avail.hasSlotCapacity() ? String.valueOf(avail.getSlotCapacity()) : "X",
+                                                    avail.getPendingBookings(),
+                                                    avail.getConfirmedBookings(),
+                                                    avail.getRideName()
+                                                 )
+                    ).forEach(System.out::println);
         } catch (StatusRuntimeException e) {
             if (e.getStatus() == Status.INVALID_ARGUMENT) {
                 throw new IllegalArgumentException();

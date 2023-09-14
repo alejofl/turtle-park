@@ -108,6 +108,8 @@ public class BookServant extends BookServiceImplBase {
                     Util.checkTimeFormat(bookingRequest.getSlot()).orElseThrow(IllegalArgumentException::new),
                     UUID.fromString(bookingRequest.getUserId())
             );
+            empty.onNext(Empty.newBuilder().build());
+            empty.onCompleted();
         } catch (IllegalArgumentException e) {
             empty.onError(Status.INVALID_ARGUMENT.asRuntimeException());
         }
@@ -123,6 +125,8 @@ public class BookServant extends BookServiceImplBase {
                     Util.checkTimeFormat(bookingRequest.getSlot()).orElseThrow(IllegalArgumentException::new),
                     UUID.fromString(bookingRequest.getUserId())
             );
+            empty.onNext(Empty.newBuilder().build());
+            empty.onCompleted();
         } catch (IllegalArgumentException e) {
             empty.onError(Status.INVALID_ARGUMENT.asRuntimeException());
         }

@@ -6,6 +6,7 @@ import ar.edu.itba.pod.server.Util;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 
@@ -151,7 +152,7 @@ public class Park {
         synchronized (ridesLock) {
             slotSize = rides.get(rideName).getSlotSize();
         }
-        for (LocalTime i = startingSlot; i.isBefore(endingSlot); i = i.plusMinutes(slotSize)) {
+        for (LocalTime i = startingSlot; i.isBefore(endingSlot) || i.equals(endingSlot); i = i.plusMinutes(slotSize)) {
             getAvailabilityForSlot(rideName, dayOfYear, i).ifPresent(ans::add);
         }
         return ans;

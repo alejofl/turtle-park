@@ -23,7 +23,7 @@ public class NotificationServant extends NotificationServiceImplBase {
         try {
             BlockingQueue<NotificationInformation> blockingQueue = park.followBooking(notificationRequest.getRideName(), UUID.fromString(notificationRequest.getUserId()), notificationRequest.getDayOfYear());
             NotificationInformation info = blockingQueue.take();
-            for (NotificationResponse notif = info.status().consumeNotification(info);  notif != null; info = blockingQueue.take(), notif = info.status().consumeNotification(info)) {
+            for (NotificationResponse notif = info.status().consumeNotification(info); notif != null; info = blockingQueue.take(), notif = info.status().consumeNotification(info)) {
                 notificationResponse.onNext(notif);
             }
             notificationResponse.onCompleted();

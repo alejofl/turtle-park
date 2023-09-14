@@ -76,14 +76,17 @@ public class Ride {
     }
 
     public synchronized Optional<AvailabilityInformation> getAvailabilityForSlot(int dayOfYear, LocalTime slot) {
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
         return ridesForDay.get(dayOfYear).getAvailabilityForSlot(slot);
     }
 
     public synchronized Optional<SuggestedCapacityInformation> getSuggestedCapacity(int dayOfYear) {
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
         return ridesForDay.get(dayOfYear).getSuggestedCapacity();
     }
 
     public synchronized Optional<List<Booking>> getConfirmedBookings(int dayOfYear) {
+        ridesForDay.putIfAbsent(dayOfYear, new RideForDay(name, dayOfYear, openingTime, closingTime, slotSize));
         return ridesForDay.get(dayOfYear).getConfirmedBookings();
     }
 
