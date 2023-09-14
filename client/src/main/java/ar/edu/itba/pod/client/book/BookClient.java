@@ -4,9 +4,6 @@ import ar.edu.itba.pod.client.Action;
 import ar.edu.itba.pod.client.Client;
 import ar.edu.itba.pod.client.ServerUnavailableException;
 import ar.edu.itba.pod.client.Util;
-import ar.edu.itba.pod.client.notification.NotificationClient;
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
 
 import java.io.IOException;
 

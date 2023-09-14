@@ -2,7 +2,6 @@ package ar.edu.itba.pod.client.book;
 
 import ar.edu.itba.pod.book.BookServiceGrpc;
 import ar.edu.itba.pod.book.BookingRequest;
-import ar.edu.itba.pod.book.BookingResponse;
 import ar.edu.itba.pod.client.Action;
 import ar.edu.itba.pod.client.ServerUnavailableException;
 import ar.edu.itba.pod.client.Util;

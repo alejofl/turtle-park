@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.server;
 
-import ar.edu.itba.pod.data.Park;
 import ar.edu.itba.pod.servant.AdminServant;
 import ar.edu.itba.pod.servant.BookServant;
 import ar.edu.itba.pod.servant.NotificationServant;

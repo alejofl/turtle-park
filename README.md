@@ -75,7 +75,7 @@ Must be running for the clients to work. Once it's stopped, all stored data is f
 ./turtle-park [ -Dport=XXXX ]
 ```
 
-* The default port for the server is `7321`, it can be overriden as shown above.
+* The default port for the server is `7321`, it can be overridden as shown above.
 
 ### 3.2. Administration Client
 
@@ -216,7 +216,7 @@ Two operations are supported:
 ./query-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=capacity -Dday=XXX -DoutPath=./path.txt 
 ```
 
-The path must point to a file that will be created or overriden, with the query results. The file **will** have the following fields in a table:
+The path must point to a file that will be created or overridden, with the query results. The file **will** have the following fields in a table:
 
 * Slot (HH:MM)
 * Suggested capacity (positive integer)
@@ -237,7 +237,7 @@ Slot  | Capacity | Attraction
 ./query-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=confirmed -Dday=XXX -DoutPath=./path.txt 
 ```
 
-The path must point to a file that will be created or overriden, with the query results. The file **will** have the following fields in a table:
+The path must point to a file that will be created or overridden, with the query results. The file **will** have the following fields in a table:
 
 * Slot (HH:MM)
 * Visitor ID (UUID)

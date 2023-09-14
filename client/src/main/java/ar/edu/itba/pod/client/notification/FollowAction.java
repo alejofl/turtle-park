@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.client.notification;
 
-import ar.edu.itba.pod.admin.AdminServiceGrpc;
 import ar.edu.itba.pod.client.Action;
 import ar.edu.itba.pod.client.ServerUnavailableException;
 import ar.edu.itba.pod.client.Util;

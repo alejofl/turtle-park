@@ -1,8 +1,5 @@
 package ar.edu.itba.pod.client.book;
 
-import ar.edu.itba.pod.admin.AdminServiceGrpc;
-import ar.edu.itba.pod.admin.CapacityRequest;
-import ar.edu.itba.pod.admin.CapacityResponse;
 import ar.edu.itba.pod.book.BookServiceGrpc;
 import ar.edu.itba.pod.book.RideResponse;
 import ar.edu.itba.pod.client.Action;
@@ -13,7 +10,6 @@ import io.grpc.ManagedChannel;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 
-import java.awt.print.Book;
 import java.util.List;
 
 public class AttractionsAction extends Action {

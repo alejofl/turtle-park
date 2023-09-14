@@ -13,7 +13,6 @@ import ar.edu.itba.pod.server.Util;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
-import java.time.LocalTime;
 import java.util.UUID;
 
 public class AdminServant extends AdminServiceImplBase {

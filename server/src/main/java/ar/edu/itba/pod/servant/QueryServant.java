@@ -10,7 +10,7 @@ import io.grpc.stub.StreamObserver;
 import java.util.stream.Collectors;
 
 public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
-    Park park = Park.getInstance();
+    final Park park = Park.getInstance();
 
     private SuggestedCapacity getSuggestedCapacityInformation(ar.edu.itba.pod.data.SuggestedCapacityInformation data) {
         SuggestedCapacity.Builder builder = SuggestedCapacity.newBuilder()

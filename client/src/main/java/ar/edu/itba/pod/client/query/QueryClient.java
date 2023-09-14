@@ -1,12 +1,9 @@
 package ar.edu.itba.pod.client.query;
 
-import ar.edu.itba.pod.admin.PassRequest;
 import ar.edu.itba.pod.client.Action;
 import ar.edu.itba.pod.client.Client;
 import ar.edu.itba.pod.client.ServerUnavailableException;
 import ar.edu.itba.pod.client.Util;
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
 
 import java.io.IOException;
 

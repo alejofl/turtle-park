@@ -2,9 +2,6 @@ package ar.edu.itba.pod.data;
 
 import java.time.LocalTime;
 import java.util.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 
 public class Ride {

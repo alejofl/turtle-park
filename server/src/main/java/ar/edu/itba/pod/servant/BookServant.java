@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class BookServant extends BookServiceImplBase {
 
-    private Park park = Park.getInstance();
+    private final Park park = Park.getInstance();
 
     @Override
     public void getRides(Empty empty, StreamObserver<RideResponse> rideResponse) {

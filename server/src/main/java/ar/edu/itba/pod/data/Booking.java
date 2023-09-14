@@ -2,7 +2,6 @@ package ar.edu.itba.pod.data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.UUID;
 
 public class Booking implements Comparable<Booking> {
     private final String rideName;

@@ -1,14 +1,11 @@
 package ar.edu.itba.pod.servant;
 
-import ar.edu.itba.pod.book.BookingResponse;
-import ar.edu.itba.pod.book.BookingStatus;
 import ar.edu.itba.pod.commons.Empty;
 import ar.edu.itba.pod.data.NotificationInformation;
 import ar.edu.itba.pod.data.Park;
 import ar.edu.itba.pod.notification.NotificationRequest;
 import ar.edu.itba.pod.notification.NotificationResponse;
 import ar.edu.itba.pod.notification.NotificationServiceGrpc.NotificationServiceImplBase;
-import ar.edu.itba.pod.server.Util;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 

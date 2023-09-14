@@ -4,13 +4,11 @@ import ar.edu.itba.pod.client.Action;
 import ar.edu.itba.pod.client.ServerUnavailableException;
 import ar.edu.itba.pod.client.Util;
 import ar.edu.itba.pod.notification.NotificationRequest;
-import ar.edu.itba.pod.notification.NotificationResponse;
 import ar.edu.itba.pod.notification.NotificationServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class UnfollowAction extends Action {

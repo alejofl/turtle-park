@@ -1,12 +1,10 @@
 package ar.edu.itba.pod.data;
 
-import ar.edu.itba.pod.query.SuggestedCapacity;
 import ar.edu.itba.pod.server.Util;
 
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
-import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 

@@ -3,7 +3,6 @@ package ar.edu.itba.pod.client.admin;
 import ar.edu.itba.pod.admin.AdminServiceGrpc;
 import ar.edu.itba.pod.admin.PassRequest;
 import ar.edu.itba.pod.admin.PassType;
-import ar.edu.itba.pod.admin.RideRequest;
 import ar.edu.itba.pod.client.Action;
 import ar.edu.itba.pod.client.Util;
 import io.grpc.ManagedChannel;
