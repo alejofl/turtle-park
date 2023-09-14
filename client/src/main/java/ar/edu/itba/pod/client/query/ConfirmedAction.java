@@ -1,14 +1,12 @@
 package ar.edu.itba.pod.client.query;
 
 import ar.edu.itba.pod.client.Action;
+import ar.edu.itba.pod.client.Util;
 import ar.edu.itba.pod.query.*;
 import io.grpc.ManagedChannel;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.List;
 
 public class ConfirmedAction extends Action {
@@ -19,31 +17,38 @@ public class ConfirmedAction extends Action {
     @Override
     public void run(ManagedChannel channel) {
         QueryServiceGrpc.QueryServiceBlockingStub stub = QueryServiceGrpc.newBlockingStub(channel);
-        Integer dayOfYear = Integer.valueOf(System.getProperty("day"));
+        int dayOfYear = Integer.parseInt(System.getProperty("day"));
         QueryRequest request = QueryRequest.newBuilder().setDayOfYear(dayOfYear).build();
         ConfirmedBookingResponse response = stub.getConfirmedBookings(request);
 
-        Path file = Paths.get("confirmedBooking.txt");
+        List<ConfirmedBooking> bookings = response.getBookingsList();
         try {
-            Files.createFile(file);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-
-        String firstLine = String.format("%-5s | %-36s | %s\n", "Slot", "Visitor", "Attraction");
-        try {
-            Files.writeString(file, firstLine, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-
-        for(ConfirmedBooking c : response.getBookingsList()) {
-            String line = String.format("%s | %s | %s\n", c.getSlot(), c.getUserId(), c.getRideName());
-            try {
-                Files.writeString(file, line, StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
+            if (bookings.isEmpty()) {
+                throw new IllegalStateException();
             }
+
+            Path path = Paths.get(System.getProperty("outPath"));
+            Files.write(
+                    path,
+                    String.format("%-5s | %-36s | %s\n", "Slot", "Visitor", "Attraction").getBytes(),
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING
+            );
+            for (ConfirmedBooking c : bookings) {
+                Files.write(
+                        path,
+                        String.format("%s | %s | %s\n", c.getSlot(), c.getUserId(), c.getRideName()).getBytes(),
+                        StandardOpenOption.WRITE,
+                        StandardOpenOption.APPEND
+                );
+            }
+        } catch (IOException | InvalidPathException e) {
+            System.err.println(Util.IO_ERROR_MESSAGE);
+            System.exit(1);
+        } catch (IllegalStateException e) {
+            System.err.println("The query gave no results.");
+            System.exit(0);
         }
     }
 

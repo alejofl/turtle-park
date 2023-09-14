@@ -11,10 +11,7 @@ import jdk.dynalink.StandardOperation;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.List;
 
 public class CapacityAction extends Action {
@@ -25,29 +22,38 @@ public class CapacityAction extends Action {
     @Override
     public void run(ManagedChannel channel) {
         QueryServiceGrpc.QueryServiceBlockingStub stub = QueryServiceGrpc.newBlockingStub(channel);
-        Integer dayOfYear = Integer.valueOf(System.getProperty("day"));
-        QueryRequest request = QueryRequest.newBuilder().setDayOfYear(dayOfYear.intValue()).build();
+        int dayOfYear = Integer.parseInt(System.getProperty("day"));
+        QueryRequest request = QueryRequest.newBuilder().setDayOfYear(dayOfYear).build();
         SuggestedCapacityResponse response = stub.getSuggestedCapacities(request);
 
-        Path file = Paths.get("suggestedCapacities.txt");
+        List<SuggestedCapacity> suggestedCapacities = response.getCapacitiesList();
         try {
-            Files.createFile(file);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-        String firstLine = String.format("%-5s | %s | %s\n", "Slot", "Capacity", "Attraction");
-        try {
-            Files.writeString(file, firstLine, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-        for(SuggestedCapacity s : response.getCapacitiesList()) {
-            String line = String.format("%-5s | %8d | %s\n", s.getSlot(), s.getSuggestedCapacity(), s.getRideName());
-            try {
-                Files.writeString(file, line, StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
+            if (suggestedCapacities.isEmpty()) {
+                throw new IllegalStateException();
             }
+
+            Path path = Paths.get(System.getProperty("outPath"));
+            Files.write(
+                    path,
+                    String.format("%-5s | %s | %s\n", "Slot", "Capacity", "Attraction").getBytes(),
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING
+            );
+            for (SuggestedCapacity s : suggestedCapacities) {
+                Files.write(
+                        path,
+                        String.format("%-5s | %8d | %s\n", s.getSlot(), s.getSuggestedCapacity(), s.getRideName()).getBytes(),
+                        StandardOpenOption.WRITE,
+                        StandardOpenOption.APPEND
+                );
+            }
+        } catch (IOException | InvalidPathException e) {
+            System.err.println(Util.IO_ERROR_MESSAGE);
+            System.exit(1);
+        } catch (IllegalStateException e) {
+            System.err.println("The query gave no results.");
+            System.exit(0);
         }
     }
 

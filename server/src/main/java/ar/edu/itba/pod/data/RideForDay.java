@@ -314,7 +314,7 @@ public class RideForDay {
     }
 
     public Optional<SuggestedCapacityInformation> getSuggestedCapacity() {
-        if (!this.hasCapacity()) {
+        if (this.hasCapacity()) {
             return Optional.empty();
         }
         Set<Map.Entry<LocalTime, Queue<Util.PendingBooking>>> pendings;
@@ -325,7 +325,7 @@ public class RideForDay {
                 Comparator.comparingInt((Map.Entry<LocalTime, Queue<Util.PendingBooking>> e) -> e.getValue().size()));
         int suggestedCapacity = maxEntry.getValue().size();
         LocalTime slot = maxEntry.getKey();
-        return Optional.of( new SuggestedCapacityInformation(rideName, suggestedCapacity, slot));
+        return Optional.of(new SuggestedCapacityInformation(rideName, suggestedCapacity, slot));
     }
 
     public Optional<List<Booking>> getConfirmedBookings() {
