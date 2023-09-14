@@ -6,6 +6,7 @@ import ar.edu.itba.pod.admin.CapacityResponse;
 import ar.edu.itba.pod.book.BookServiceGrpc;
 import ar.edu.itba.pod.book.RideResponse;
 import ar.edu.itba.pod.client.Action;
+import ar.edu.itba.pod.client.ServerUnavailableException;
 import ar.edu.itba.pod.client.Util;
 import ar.edu.itba.pod.commons.Empty;
 import io.grpc.ManagedChannel;
@@ -37,6 +38,8 @@ public class AttractionsAction extends Action {
         } catch (StatusRuntimeException e) {
             if (e.getStatus() == Status.INVALID_ARGUMENT) {
                 throw new IllegalArgumentException();
+            } else if (e.getStatus() == Status.UNAVAILABLE) {
+                throw new ServerUnavailableException();
             }
             System.err.println(Util.GENERIC_ERROR_MESSAGE);
             System.exit(1);

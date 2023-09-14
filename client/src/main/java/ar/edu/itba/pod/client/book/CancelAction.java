@@ -3,6 +3,7 @@ package ar.edu.itba.pod.client.book;
 import ar.edu.itba.pod.book.BookServiceGrpc;
 import ar.edu.itba.pod.book.BookingRequest;
 import ar.edu.itba.pod.client.Action;
+import ar.edu.itba.pod.client.ServerUnavailableException;
 import ar.edu.itba.pod.client.Util;
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
@@ -36,6 +37,8 @@ public class CancelAction extends Action {
         } catch (StatusRuntimeException e) {
             if (e.getStatus() == Status.INVALID_ARGUMENT) {
                 throw new IllegalArgumentException();
+            } else if (e.getStatus() == Status.UNAVAILABLE) {
+                throw new ServerUnavailableException();
             }
             System.err.println(Util.GENERIC_ERROR_MESSAGE);
             System.exit(1);
