@@ -88,7 +88,7 @@ public class Park {
         La segunda condición hace referencia al caso en el no existan pases para un día.
         Es decir nunca se creo el par key-value para ese dia con el mapa con los pases.
      */
-    public synchronized boolean bookRide(String rideName, int dayOfYear, LocalTime slot, UUID visitorId) {
+    public boolean bookRide(String rideName, int dayOfYear, LocalTime slot, UUID visitorId) {
         if (!canOperate(rideName, dayOfYear, slot, visitorId)) {
             throw new IllegalArgumentException();
         }
@@ -142,7 +142,7 @@ public class Park {
         }
     }
 
-    public synchronized List<AvailabilityInformation> getAvailabilityForSlot(String rideName, int dayOfYear, LocalTime startingSlot, LocalTime endingSlot) {
+    public List<AvailabilityInformation> getAvailabilityForSlot(String rideName, int dayOfYear, LocalTime startingSlot, LocalTime endingSlot) {
         if (endingSlot.isBefore(startingSlot)) {
             throw new IllegalArgumentException();
         }
