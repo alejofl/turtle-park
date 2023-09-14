@@ -22,6 +22,7 @@ public class AdminServant extends AdminServiceImplBase {
 
     @Override
     public void addRide(RideRequest rideRequest, StreamObserver<Empty> empty) {
+        System.out.println("ADD RIDE " + rideRequest.getAllFields().toString());
         try {
             park.addRide(
                     rideRequest.getRideName(),
@@ -38,6 +39,7 @@ public class AdminServant extends AdminServiceImplBase {
 
     @Override
     public void addPass(PassRequest passRequest, StreamObserver<Empty> empty) {
+        System.out.println("ADD PASS " + passRequest.getAllFields().toString());
         try {
             park.addPass(
                     UUID.fromString(passRequest.getUserId()),
@@ -53,6 +55,7 @@ public class AdminServant extends AdminServiceImplBase {
 
     @Override
     public void loadRideCapacity(CapacityRequest capacityRequest, StreamObserver<CapacityResponse> capacityResponse) {
+        System.out.println("LOAD RIDE CAPACITY " + capacityRequest.getAllFields().toString());
         try {
             CapacityInformation ans = park.loadRideCapacity(
                     capacityRequest.getRideName(),

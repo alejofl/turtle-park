@@ -16,6 +16,7 @@ public class BookServant extends BookServiceImplBase {
 
     @Override
     public void getRides(Empty empty, StreamObserver<RideResponse> rideResponse) {
+        System.out.println("GET RIDES " + empty.getAllFields().toString());
         RideResponse response = RideResponse.newBuilder().addAllRides(
                 park.getRides().stream().map(ride -> RideInformation
                         .newBuilder()
@@ -41,6 +42,7 @@ public class BookServant extends BookServiceImplBase {
 
     @Override
     public void getAvailability(AvailabilityRequest availabilityRequest, StreamObserver<AvailabilityResponse> availabilityResponse) {
+        System.out.println("GET AVAILABILITY " + availabilityRequest.getAllFields().toString());
         try {
             AvailabilityResponse.Builder response = AvailabilityResponse.newBuilder();
             if (availabilityRequest.hasSingleSlotAvailability()) {
@@ -78,6 +80,7 @@ public class BookServant extends BookServiceImplBase {
 
     @Override
     public void bookRide(BookingRequest bookingRequest, StreamObserver<BookingResponse> bookingResponse) {
+        System.out.println("BOOK RIDE " + bookingRequest.getAllFields().toString());
         try {
             boolean didBook = park.bookRide(
                     bookingRequest.getRideName(),
@@ -97,6 +100,7 @@ public class BookServant extends BookServiceImplBase {
 
     @Override
     public void confirmBooking(BookingRequest bookingRequest, StreamObserver<Empty> empty) {
+        System.out.println("CONFIRM BOOKING " + bookingRequest.getAllFields().toString());
         try {
             park.confirmBooking(
                     bookingRequest.getRideName(),
@@ -111,6 +115,7 @@ public class BookServant extends BookServiceImplBase {
 
     @Override
     public void cancelBooking(BookingRequest bookingRequest, StreamObserver<Empty> empty) {
+        System.out.println("CANCEL BOOKING " + bookingRequest.getAllFields().toString());
         try {
             park.cancelBooking(
                     bookingRequest.getRideName(),

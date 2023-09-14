@@ -19,6 +19,7 @@ public class NotificationServant extends NotificationServiceImplBase {
     private final Park park = Park.getInstance();
     @Override
     public void followBooking(NotificationRequest notificationRequest, StreamObserver<NotificationResponse> notificationResponse) {
+        System.out.println("FOLLOW BOOKING " + notificationRequest.getAllFields().toString());
         try {
             BlockingQueue<NotificationInformation> blockingQueue = park.followBooking(notificationRequest.getRideName(), UUID.fromString(notificationRequest.getUserId()), notificationRequest.getDayOfYear());
             NotificationInformation info = blockingQueue.take();
@@ -35,8 +36,11 @@ public class NotificationServant extends NotificationServiceImplBase {
 
     @Override
     public void unfollowBooking(NotificationRequest notificationRequest, StreamObserver<Empty> empty) {
+        System.out.println("UNFOLLOW BOOKING " + notificationRequest.getAllFields().toString());
         try {
             park.unfollowBooking(notificationRequest.getRideName(), notificationRequest.getDayOfYear(), UUID.fromString(notificationRequest.getUserId()));
+            empty.onNext(Empty.newBuilder().build());
+            empty.onCompleted();
         } catch (IllegalArgumentException e) {
             empty.onError(Status.INVALID_ARGUMENT.asRuntimeException());
         }

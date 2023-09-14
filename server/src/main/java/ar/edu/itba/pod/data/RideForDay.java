@@ -1,5 +1,7 @@
 package ar.edu.itba.pod.data;
 
+import ar.edu.itba.pod.server.Util;
+
 import java.util.*;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,7 +14,7 @@ public class RideForDay {
     private final AtomicInteger capacity = new AtomicInteger(-1);
     private final Map<Visitor, BlockingQueue<NotificationInformation>> notifications = new HashMap<>();
     private final Object notificationsLock = "notificationsLock";
-    private final Map<LocalTime, Queue<Visitor>> pendingBookings = new HashMap<>();
+    private final Map<LocalTime, Queue<Util.PendingBooking>> pendingBookings = new HashMap<>();
     private final Object pendingBookingsLock = "pendingBookingsLock";
     private final Map<LocalTime, Set<Booking>> confirmedBookings = new HashMap<>();
     private final Object confirmedBookingsLock = "confirmedBookingsLock";
@@ -40,26 +42,29 @@ public class RideForDay {
             slots = pendingBookings.keySet().stream().sorted().toList();
         }
         for (LocalTime slot : slots) {
-            Queue<Visitor> pendings;
+            Queue<Util.PendingBooking> pendings;
             synchronized (pendingBookingsLock) {
                 pendings = pendingBookings.get(slot);
             }
             for (int i = 0; i < capacity && !pendings.isEmpty(); i++) {
-                Visitor visitor = pendings.poll();
+                Util.PendingBooking visitor = pendings.poll();
                 synchronized (confirmedBookingsLock) {
-                    confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor));
+                    confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor.getVisitor()));
                 }
-                notifyConfirmedBooking(slot, visitor);
-                visitor.confirmBooking();
+                notifyConfirmedBooking(slot, visitor.getVisitor());
+                visitor.getVisitor().confirmBooking();
                 confirmedBookingsCount++;
             }
         }
         for (int i = 0; i < slots.size(); i++) {
-            Queue<Visitor> pendings;
+            Queue<Util.PendingBooking> pendingsInSlot;
             synchronized (pendingBookingsLock) {
-                pendings = pendingBookings.get(slots.get(i));
+                pendingsInSlot = pendingBookings.get(slots.get(i));
             }
-            for (int j = i+1; !pendings.isEmpty() && j < slots.size(); j++) {
+            if (!pendingsInSlot.isEmpty() && pendingsInSlot.peek().wasRelocated()) {
+                continue;
+            }
+            for (int j = i+1; !pendingsInSlot.isEmpty() && j < slots.size(); j++) {
                 int occupiedCapacityByPending, occupiedCapacityByConfirmed;
                 synchronized (pendingBookingsLock) {
                     occupiedCapacityByPending = pendingBookings.get(slots.get(j)).size();
@@ -68,23 +73,23 @@ public class RideForDay {
                     occupiedCapacityByConfirmed = confirmedBookings.get(slots.get(j)).size();
                 }
                 int occupiedCapacity = occupiedCapacityByPending + occupiedCapacityByConfirmed;
-                while (!pendings.isEmpty() && occupiedCapacity < capacity) {
-                    Visitor visitor = pendings.poll();
-                    if (visitor.getPassType() == PassType.HALF_DAY && slots.get(j).isAfter(Visitor.HALF_DAY_CUTOFF) ){
+                while (!pendingsInSlot.isEmpty() && occupiedCapacity < capacity) {
+                    Util.PendingBooking visitor = pendingsInSlot.poll();
+                    if (visitor.getVisitor().getPassType() == PassType.HALF_DAY && slots.get(j).isAfter(Visitor.HALF_DAY_CUTOFF) ){
                         cancelledBookingCount++;
-                        notifyCancelledBooking(slots.get(i), visitor);
+                        notifyCancelledBooking(slots.get(i), visitor.getVisitor());
                     } else {
                         synchronized (pendingBookingsLock) {
-                            pendingBookings.get(slots.get(j)).add(visitor);
+                            pendingBookings.get(slots.get(j)).add(new Util.PendingBooking(visitor.getVisitor(), true));
                         }
-                        notifyMovedBooking(slots.get(i), slots.get(j), visitor);
+                        notifyMovedBooking(slots.get(i), slots.get(j), visitor.getVisitor());
                         pendingBookingsCount++;
                         occupiedCapacity++;
                     }
                 }
             }
-            while (!pendings.isEmpty()) {
-                notifyCancelledBooking(slots.get(i), pendings.poll());
+            while (!pendingsInSlot.isEmpty()) {
+                notifyCancelledBooking(slots.get(i), pendingsInSlot.poll().getVisitor());
                 cancelledBookingCount++;
             }
         }
@@ -190,12 +195,12 @@ public class RideForDay {
 
     private boolean hasAnotherPendingBooking(Visitor visitor) {
         boolean hasAnotherBooking = false;
-        Set<Map.Entry<LocalTime, Queue<Visitor>>> pendings;
+        Set<Map.Entry<LocalTime, Queue<Util.PendingBooking>>> pendings;
         synchronized (pendingBookingsLock) {
             pendings = pendingBookings.entrySet();
         }
-        for (Map.Entry<LocalTime, Queue<Visitor>> entry : pendings) {
-            if (entry.getValue().contains(visitor)) {
+        for (Map.Entry<LocalTime, Queue<Util.PendingBooking>> entry : pendings) {
+            if (entry.getValue().contains(new Util.PendingBooking(visitor))) {
                 hasAnotherBooking = true;
                 break;
             }
@@ -215,7 +220,7 @@ public class RideForDay {
         boolean pendingCondition, confirmedCondition;
         boolean hasAvailability;
         synchronized (pendingBookingsLock) {
-            pendingCondition = pendingBookings.get(slot).contains(visitor);
+            pendingCondition = pendingBookings.get(slot).contains(new Util.PendingBooking(visitor));
         }
         synchronized (confirmedBookingsLock) {
             confirmedCondition = confirmedBookings.get(slot).contains(new Booking(rideName, dayOfYear, slot, visitor));
@@ -226,7 +231,7 @@ public class RideForDay {
         }
         if (!this.hasCapacity()) {
             synchronized (pendingBookingsLock) {
-                pendingBookings.get(slot).add(visitor);
+                pendingBookings.get(slot).add(new Util.PendingBooking(visitor));
             }
             notifyPendingBooking(slot, visitor);
             return false;
@@ -244,7 +249,7 @@ public class RideForDay {
     public void confirmBooking(LocalTime slot, Visitor visitor) {
         boolean pendingCondition, confirmedCondition;
         synchronized (pendingBookingsLock) {
-            pendingCondition = !pendingBookings.get(slot).contains(visitor);
+            pendingCondition = !pendingBookings.get(slot).contains(new Util.PendingBooking(visitor));
         }
         synchronized (confirmedBookingsLock) {
             confirmedCondition = confirmedBookings.get(slot).contains(new Booking(rideName, dayOfYear, slot, visitor));
@@ -253,7 +258,7 @@ public class RideForDay {
             throw new IllegalArgumentException();
         }
         synchronized (pendingBookingsLock) {
-            pendingBookings.get(slot).remove(visitor);
+            pendingBookings.get(slot).remove(new Util.PendingBooking(visitor));
         }
         synchronized (confirmedBookingsLock) {
             confirmedBookings.get(slot).add(new Booking(rideName, dayOfYear, slot, visitor));
@@ -265,7 +270,7 @@ public class RideForDay {
     public void cancelBooking(LocalTime slot, Visitor visitor) {
         boolean pendingCondition, confirmedCondition;
         synchronized (pendingBookingsLock) {
-            pendingCondition = pendingBookings.get(slot).contains(visitor);
+            pendingCondition = pendingBookings.get(slot).contains(new Util.PendingBooking(visitor));
         }
         synchronized (confirmedBookingsLock) {
             confirmedCondition = confirmedBookings.get(slot).contains(new Booking(rideName, dayOfYear, slot, visitor));
@@ -280,7 +285,7 @@ public class RideForDay {
         }
         if (pendingCondition) {
             synchronized (pendingBookingsLock) {
-                pendingBookings.get(slot).remove(visitor);
+                pendingBookings.get(slot).remove(new Util.PendingBooking(visitor));
             }
             notifyCancelledBooking(slot, visitor);
             return;
@@ -312,12 +317,12 @@ public class RideForDay {
         if (!this.hasCapacity()) {
             return Optional.empty();
         }
-        Set<Map.Entry<LocalTime, Queue<Visitor>>> pendings;
+        Set<Map.Entry<LocalTime, Queue<Util.PendingBooking>>> pendings;
         synchronized (pendingBookingsLock) {
             pendings = pendingBookings.entrySet();
         }
-        Map.Entry<LocalTime, Queue<Visitor>> maxEntry = Collections.max(pendings,
-                Comparator.comparingInt((Map.Entry<LocalTime, Queue<Visitor>> e) -> e.getValue().size()));
+        Map.Entry<LocalTime, Queue<Util.PendingBooking>> maxEntry = Collections.max(pendings,
+                Comparator.comparingInt((Map.Entry<LocalTime, Queue<Util.PendingBooking>> e) -> e.getValue().size()));
         int suggestedCapacity = maxEntry.getValue().size();
         LocalTime slot = maxEntry.getKey();
         return Optional.of( new SuggestedCapacityInformation(rideName, suggestedCapacity, slot));
@@ -347,7 +352,7 @@ public class RideForDay {
             notifications.put(visitor, new LinkedBlockingQueue<>());
             notificationQueue = notifications.get(visitor);
         }
-        Set<Map.Entry<LocalTime, Queue<Visitor>>> pendings;
+        Set<Map.Entry<LocalTime, Queue<Util.PendingBooking>>> pendings;
         Set<Map.Entry<LocalTime, Set<Booking>>> confirmed;
         synchronized (pendingBookingsLock) {
             pendings = pendingBookings.entrySet();
@@ -355,8 +360,8 @@ public class RideForDay {
         synchronized (confirmedBookingsLock) {
             confirmed = confirmedBookings.entrySet();
         }
-        for (Map.Entry<LocalTime, Queue<Visitor>> entry : pendings) {
-            if (entry.getValue().contains(visitor)) {
+        for (Map.Entry<LocalTime, Queue<Util.PendingBooking>> entry : pendings) {
+            if (entry.getValue().contains(new Util.PendingBooking(visitor))) {
                 notifyPendingBooking(entry.getKey(), visitor);
             }
         }

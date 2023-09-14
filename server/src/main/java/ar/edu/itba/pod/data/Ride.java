@@ -47,7 +47,7 @@ public class Ride {
     }
 
     public boolean isValidSlot(LocalTime slot) {
-        boolean ans = slot.isAfter(openingTime) && slot.isBefore(closingTime);
+        boolean ans = (slot.equals(openingTime) || slot.isAfter(openingTime)) && slot.isBefore(closingTime);
         for (LocalTime i = openingTime; ans && i.isBefore(closingTime); i = i.plusMinutes(slotSize)) {
             if (i.equals(slot)) {
                 return true;
