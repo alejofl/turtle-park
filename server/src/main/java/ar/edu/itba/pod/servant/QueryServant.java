@@ -30,7 +30,6 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
     }
     @Override
     public void getSuggestedCapacities(QueryRequest queryRequest, StreamObserver<SuggestedCapacityResponse> suggestedCapacityResponse) {
-        System.out.println("GET SUGGESTED CAPACITIES " + queryRequest.getAllFields().toString());
         try {
             SuggestedCapacityResponse.Builder response = SuggestedCapacityResponse.newBuilder();
             response.addAllCapacities(
@@ -47,7 +46,6 @@ public class QueryServant extends QueryServiceGrpc.QueryServiceImplBase {
 
     @Override
     public void getConfirmedBookings(QueryRequest queryRequest, StreamObserver<ConfirmedBookingResponse> confirmedBookingResponse) {
-        System.out.println("GET CONFIRMED BOOKINGS " + queryRequest.getAllFields().toString());
         try {
             ConfirmedBookingResponse.Builder response = ConfirmedBookingResponse.newBuilder();
             response.addAllBookings(
