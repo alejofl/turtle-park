@@ -147,13 +147,13 @@ Five operations are supported:
 You can get the availability for a specific day, slot and ride by:
 
 ```Bash
-./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=availability -Dday=XXX -Dattraction=XXXXXXXX -Dslot=XX:XX
+./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=availability -Dday=XXX -Dride=XXXXXXXX -Dslot=XX:XX
 ```
 
 You can also get the availability for a range of slots for the same attraction by:
 
 ```Bash
-./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=availability -Dday=XXX -Dattraction=XXXXXXXX -Dslot=XX:XX -DslotTo=XX:XX
+./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=availability -Dday=XXX -Dride=XXXXXXXX -Dslot=XX:XX -DslotTo=XX:XX
 ```
 
 Lastly, you can also get the availability for a range of slots for all of the attractions in the park by:
@@ -165,19 +165,19 @@ Lastly, you can also get the availability for a range of slots for all of the at
 #### 3.3.3. Book a ride
 
 ```Bash
-./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=book -Dday=XXX -Dvisitor=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX -Dattraction=XXXXXXXX -Dslot=15:30
+./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=book -Dday=XXX -Dvisitor=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX -Dride=XXXXXXXX -Dslot=15:30
 ```
 
 #### 3.3.4. Confirm a booking
 
 ```Bash
-./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=confirm -Dday=XXX -Dvisitor=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX -Dattraction=XXXXXXXX -Dslot=15:30
+./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=confirm -Dday=XXX -Dvisitor=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX -Dride=XXXXXXXX -Dslot=15:30
 ```
 
 #### 3.3.5. Cancel a booking
 
 ```Bash
-./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=cancel -Dday=XXX -Dvisitor=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX -Dattraction=XXXXXXXX -Dslot=15:30
+./book-cli -DserverAddress=XX.XX.XX.XX:YYYY -Daction=cancel -Dday=XXX -Dvisitor=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX -Dride=XXXXXXXX -Dslot=15:30
 ```
 
 ### 3.4. Notification Client
